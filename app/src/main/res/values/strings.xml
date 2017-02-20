@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">My First App</string>
+    <string name="inputUsername">Username</string>
+    <string name="inputPassword">Password</string>
+    <string name="button_send">Login</string>
+    <string name="button_register">Register</string>
+    <string name="button_submit_attendance">Submit Attendance</string>
+
+    <string name="attendance_recieved">Attendance Recieved</string>
+    <string name="attendance_denied">Attendance Was not recieved</string>
+</resources>

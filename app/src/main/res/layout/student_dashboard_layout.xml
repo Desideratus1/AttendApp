@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:text="@string/button_submit_attendance"
+        android:id="@+id/submit_attendance"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="42dp" />
+
+    <TextView
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:text="@string/attendance_denied"
+        android:layout_below="@+id/submit_attendance"
+        android:layout_alignStart="@+id/submit_attendance"
+        android:layout_marginTop="56dp"
+        android:id="@+id/attendance_fail" />
+
+    <TextView
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:text="@string/attendance_recieved"
+        android:id="@+id/attendance_success"
+        android:layout_alignBaseline="@+id/attendance_fail"
+        android:layout_alignBottom="@+id/attendance_fail"
+        android:layout_alignStart="@+id/attendance_fail" />
+
+</RelativeLayout>
