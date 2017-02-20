@@ -21,7 +21,7 @@
         android:layout_below="@+id/password"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="42dp"
-        android:onClick="MainActivity.login"/>
+        android:onClick="LoginActivity.login"/>
 
     <Button
         android:layout_width="wrap_content"

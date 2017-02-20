@@ -2,20 +2,13 @@ package com.example.drpac.attendapp;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.transition.Scene;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 public class StudentDashboard extends AppCompatActivity {
 
-    Button loginButton;
-    EditText usernameField;
-    ViewGroup rootContainer;
+    Button submitAttendance;
     TextView success;
     TextView fail;
 
@@ -27,19 +20,18 @@ public class StudentDashboard extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.student_dashboard_layout);
 
-        usernameField = (EditText) findViewById(R.id.username);
+        submitAttendance = (Button) findViewById((R.id.submit_attendance));
         success = (TextView) findViewById(R.id.attendance_success);
         success.setVisibility(View.INVISIBLE);
         fail = (TextView) findViewById(R.id.attendance_fail);
         fail.setVisibility(View.INVISIBLE);
 
-        loginButton.setOnClickListener(
+        submitAttendance.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View view) {
                         success.setVisibility(View.INVISIBLE);
                         fail.setVisibility(View.INVISIBLE);
-                        String username = usernameField.getText().toString();
-                        if(submitAttendance(username)) {
+                        if(submitAttendance("admin")) {
                             success.setVisibility(View.VISIBLE);
                             fail.setVisibility(View.INVISIBLE);
                         }
@@ -52,8 +44,9 @@ public class StudentDashboard extends AppCompatActivity {
     }
     //Return true if successfully submitted
     private boolean submitAttendance(String username) {
-        if (username.equals("admin")) return true;
-        else return false;
+        //REPLACE THIS WITH SENDING IT TO RSPBPI
+        //YOU WILL SEND JUST THE NAME
+        return (username.equals("admin"));
     }
 }
 

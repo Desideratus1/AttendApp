@@ -7,6 +7,11 @@
     <string name="button_register">Register</string>
     <string name="button_submit_attendance">Submit Attendance</string>
 
-    <string name="attendance_recieved">Attendance Recieved</string>
-    <string name="attendance_denied">Attendance Was not recieved</string>
+    <string name="attendance_recieved">Attendance Received</string>
+    <string name="attendance_denied">Attendance Was not received</string>
+
+    <string name="isTeacher">Are you a professor?</string>
+    <string name="registerAccount">Register</string>
+    <string name="inputPasswordCheck">Password (Check)</string>
+    <string name="inputName">Input full name</string>
 </resources>

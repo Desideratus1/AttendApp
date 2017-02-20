@@ -1,13 +1,12 @@
 package com.example.drpac.attendapp;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.transition.Scene;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -15,6 +14,8 @@ public class LoginActivity extends AppCompatActivity {
     EditText usernameField;
     EditText passwordField;
     ViewGroup rootContainer;
+    String username;
+    String password;
 
     /**
      * Called when the activity is first created.
@@ -22,24 +23,30 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.login_layout);
 
         loginButton = (Button) findViewById(R.id.login);
         usernameField = (EditText) findViewById(R.id.username);
         passwordField = (EditText) findViewById(R.id.password);
+
+        loginButton.setOnClickListener(
+                new View.OnClickListener() {
+                    public void onClick(View view) {
+                        login(view);
+                    }
+                });
     }
 
-    private boolean usernameAndPasswordMatch(String username, String password) {
-        if (username.equals("admin") && password.equals("admin")) return true;
-        else return false;
+    private boolean usernameAndPasswordMatch(View view) {
+        String username = usernameField.getText().toString();
+        String password = passwordField.getText().toString();
+        return (username.equals("admin") && password.equals("admin"));
     }
 
-    private void login(String username, String password) {
-
-    }
-
-    public void changeSceneToStudentDashboard(View view) {
-
+    private void login(View view) {
+        if (usernameAndPasswordMatch(view)) {
+            startActivity(new Intent(LoginActivity.this, StudentDashboard.class));
+        }
     }
 }
 
