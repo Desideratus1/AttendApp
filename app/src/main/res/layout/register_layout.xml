@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:text="@string/registerAccount"
+        android:id="@+id/createAccount"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="42dp" />
+
+    <CheckBox
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:text="@string/isTeacher"
+        android:id="@+id/isTeacher"/>
+
+    <EditText android:id="@+id/username"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/inputUsername"
+        android:layout_marginTop="56dp"
+        android:layout_centerHorizontal="true" />
+
+    <EditText android:id="@+id/passwordCheck"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/inputPasswordCheck"
+        android:layout_marginTop="56dp"
+        android:layout_centerHorizontal="true" />
+
+    <EditText android:id="@+id/password"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/inputPassword"
+        android:layout_marginTop="56dp"
+        android:layout_centerHorizontal="true" />
+
+    <EditText android:id="@+id/fullName"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/inputName"
+        android:layout_marginTop="56dp"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>
