@@ -14,4 +14,10 @@
     <string name="registerAccount">Register</string>
     <string name="inputPasswordCheck">Password (Check)</string>
     <string name="inputName">Input full name</string>
+
+    <string name="start_attendance_period">Begin Attendance Period</string>
+    <string name="request_class">Begin Attendance Period</string>
+    <string name="delete_class">Begin Attendance Period</string>
+    <string name="get_attendance_records">Begin Attendance Period</string>
+
 </resources>

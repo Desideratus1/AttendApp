@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/mLayout">
+
+    <Button
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:text="@string/start_attendance_period"
+        android:id="@+id/startAttendance"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="42dp" />
+
+    <Button
+        android:layout_below="@+id/password"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:text="@string/request_class"
+        android:id="@+id/requestClass"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="42dp" />
+
+    <Button
+        android:layout_below="@+id/password"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:text="@string/delete_class"
+        android:id="@+id/deleteClass"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="42dp" />
+    <Button
+        android:layout_below="@+id/password"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:text="@string/get_attendance_records"
+        android:id="@+id/getAttendanceRecords"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="42dp" />
+
+
+</RelativeLayout>

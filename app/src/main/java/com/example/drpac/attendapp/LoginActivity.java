@@ -45,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void login(View view) {
         if (usernameAndPasswordMatch(view)) {
-            startActivity(new Intent(LoginActivity.this, StudentDashboard.class));
+            startActivity(new Intent(LoginActivity.this, AdministratorDashboard.class));
         }
     }
 }
