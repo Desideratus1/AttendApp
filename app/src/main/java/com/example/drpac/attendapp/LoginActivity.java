@@ -23,13 +23,13 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_layout);
+        setContentView(R.layout.login_layout); //User views the content specified in login_layout.xml
 
         loginButton = (Button) findViewById(R.id.login);
         usernameField = (EditText) findViewById(R.id.username);
         passwordField = (EditText) findViewById(R.id.password);
 
-        loginButton.setOnClickListener(
+        loginButton.setOnClickListener( //Whenever the login button is pressed
                 new View.OnClickListener() {
                     public void onClick(View view) {
                         login(view);
@@ -41,11 +41,14 @@ public class LoginActivity extends AppCompatActivity {
         String username = usernameField.getText().toString();
         String password = passwordField.getText().toString();
         return (username.equals("admin") && password.equals("admin"));
+        //TODO: REPLACE THIS CODE WITH DATA SENT TO AND FROM THE RASPBERRY PI
     }
 
     private void login(View view) {
         if (usernameAndPasswordMatch(view)) {
             startActivity(new Intent(LoginActivity.this, AdministratorDashboard.class));
+            //startActivity(new Intent(LoginActivity.this, StudentDashboard.class));
+            //TODO: We should be able to tell who is and who is not an administrator and send them to the appropriate screen
         }
     }
 }

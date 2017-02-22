@@ -40,6 +40,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private boolean passwordsMatch(View view) {
+        //We shouldn't let them create the account if they can't enter the password twice
         String password = passwordField.getText().toString();
         String passwordCheck = passwordFieldCheck.getText().toString();
         return (password.equals(passwordCheck));
@@ -48,6 +49,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void register(View view) {
         if (passwordsMatch(view)) {
             startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+            //TODO: Data to and from Raspberry Pi, send them back to the login screen if they succeeded
         }
     }
 }

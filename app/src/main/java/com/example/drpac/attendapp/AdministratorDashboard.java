@@ -29,6 +29,7 @@ public class AdministratorDashboard extends AppCompatActivity {
         deleteClass = (Button) findViewById(R.id.deleteClass);
         getAttendanceRecord = (Button) findViewById(R.id.getAttendanceRecords);
 
+        //Whenever a certain button is clicked, do the function
         startAttendance.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View view) {
@@ -55,6 +56,8 @@ public class AdministratorDashboard extends AppCompatActivity {
                 });
     }
 
+    //All these 4 functions do is tell us where to go when a button is pressed.
+    //TODO: Actually make these classes do something.
     private void beginAttendancePeriod(View view) {
         startActivity(new Intent(AdministratorDashboard.this, AdministratorAttendancePeriod.class));
     }

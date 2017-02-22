@@ -29,13 +29,18 @@ public class StudentDashboard extends AppCompatActivity {
         submitAttendance.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View view) {
+                        //Set both the success text and fail text to invisible
                         success.setVisibility(View.INVISIBLE);
                         fail.setVisibility(View.INVISIBLE);
                         if(submitAttendance("admin")) {
+                            //TODO: replace "admin" with the full name of their account.
+                            //If their full name exists, mark them as here and give the "SUCCESS" text
                             success.setVisibility(View.VISIBLE);
                             fail.setVisibility(View.INVISIBLE);
                         }
                         else {
+                            //Otherwise they failed but...
+                            //TODO: Maybe tell them why it failed? Too far away?
                             fail.setVisibility(View.VISIBLE);
                             success.setVisibility(View.INVISIBLE);
                         }
@@ -44,8 +49,7 @@ public class StudentDashboard extends AppCompatActivity {
     }
     //Return true if successfully submitted
     private boolean submitAttendance(String username) {
-        //REPLACE THIS WITH SENDING IT TO RSPBPI
-        //YOU WILL SEND JUST THE NAME
+        //TODO: Replace this with data sent to and from the Raspberry Pi
         return (username.equals("admin"));
     }
 }
