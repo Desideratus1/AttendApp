@@ -46,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void login(View view) {
         if (usernameAndPasswordMatch(view)) {
-            startActivity(new Intent(LoginActivity.this, AdministratorDashboard.class));
+            startActivity(new Intent(LoginActivity.this, StudentDashboard.class));
             //startActivity(new Intent(LoginActivity.this, StudentDashboard.class));
             //TODO: We should be able to tell who is and who is not an administrator and send them to the appropriate screen
         }

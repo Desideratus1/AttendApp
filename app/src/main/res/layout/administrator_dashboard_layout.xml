@@ -7,34 +7,34 @@
     android:id="@+id/mLayout">
 
     <Button
-        android:layout_width="200dp"
-        android:layout_height="50dp"
+        android:layout_width="250dp"
+        android:layout_height="75dp"
         android:text="@string/start_attendance_period"
         android:id="@+id/startAttendance"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="42dp" />
 
     <Button
-        android:layout_below="@+id/password"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
+        android:layout_below="@+id/startAttendance"
+        android:layout_width="250dp"
+        android:layout_height="75dp"
         android:text="@string/request_class"
         android:id="@+id/requestClass"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="42dp" />
 
     <Button
-        android:layout_below="@+id/password"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
+        android:layout_below="@+id/requestClass"
+        android:layout_width="250dp"
+        android:layout_height="75dp"
         android:text="@string/delete_class"
         android:id="@+id/deleteClass"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="42dp" />
     <Button
-        android:layout_below="@+id/password"
-        android:layout_width="200dp"
-        android:layout_height="50dp"
+        android:layout_below="@+id/deleteClass"
+        android:layout_width="250dp"
+        android:layout_height="75dp"
         android:text="@string/get_attendance_records"
         android:id="@+id/getAttendanceRecords"
         android:layout_centerHorizontal="true"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">My First App</string>
+    <string name="app_name">AttendApp</string>
     <string name="inputUsername">Username</string>
     <string name="inputPassword">Password</string>
     <string name="button_send">Login</string>
@@ -14,10 +14,10 @@
     <string name="registerAccount">Register</string>
     <string name="inputPasswordCheck">Password (Check)</string>
     <string name="inputName">Input full name</string>
-
+s
     <string name="start_attendance_period">Begin Attendance Period</string>
-    <string name="request_class">Begin Attendance Period</string>
-    <string name="delete_class">Begin Attendance Period</string>
-    <string name="get_attendance_records">Begin Attendance Period</string>
+    <string name="request_class">Request Class</string>
+    <string name="delete_class">Delete Class</string>
+    <string name="get_attendance_records">Get/Display Attendance Record</string>
 
 </resources>
