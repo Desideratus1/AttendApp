@@ -1,6 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-</LinearLayout>
+    <EditText android:id="@+id/classList"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:hint="Class name"
+        android:layout_marginTop="56dp"
+        android:layout_centerHorizontal="true" />
+
+    <EditText android:id="@+id/timeField"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/time_in_minutes"
+        android:layout_marginTop="56dp"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/classList"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_send"
+        android:id="@+id/beginAttendancePeriod"
+        android:layout_below="@+id/timeField"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="42dp"
+        android:onClick="AdministratorAttendancePeriod.beginPeriod"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_send"
+        android:id="@+id/cancelAttendancePeriod"
+        android:layout_below="@+id/beginAttendancePeriod"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="42dp"
+        android:onClick="AdministratorAttendancePeriod.cancelPeriod"/>
+
+    <TextView
+        android:id="@+id/attendancePeriodTexts"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/cancelAttendancePeriod"/>
+
+</RelativeLayout>
