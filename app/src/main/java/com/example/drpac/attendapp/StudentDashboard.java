@@ -1,4 +1,4 @@
-package com.example.drpac.attendapp;
+package com.example.drpac.attendApp;
 
 import android.Manifest;
 import android.content.Intent;
@@ -15,8 +15,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
-import java.net.DatagramPacket;
 
 public class StudentDashboard extends AppCompatActivity {
 
@@ -83,7 +81,9 @@ public class StudentDashboard extends AppCompatActivity {
                         success.setVisibility(View.INVISIBLE);
                         fail.setVisibility(View.INVISIBLE);
                         if(submitAttendance("admin")) {
-                            //TODO: replace "admin" with the full name of their account.
+                            /*
+                            TODO: replace "admin" with the full name of their account.
+                             */
                             //If their full name exists, mark them as here and give the "SUCCESS" text
                             success.setVisibility(View.VISIBLE);
                             fail.setVisibility(View.INVISIBLE);
@@ -109,7 +109,14 @@ public class StudentDashboard extends AppCompatActivity {
 
     //Return true if successfully submitted
     private boolean submitAttendance(String username) {
-        //TODO: Replace this with data sent to and from the Raspberry Pi - Also, get location via GPS
+        /*
+        TODO: Replace this with data sent to and from the Raspberry Pi
+        WHAT IS BEING SENT:
+            Full name
+        WHAT IS BEING RECIEVED:
+            Boolean stating whether or not the attendance for that name has succeeded
+         */
+
         return (username.equals("admin"));
     }
 }

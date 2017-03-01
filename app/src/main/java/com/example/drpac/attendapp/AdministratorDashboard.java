@@ -1,12 +1,10 @@
-package com.example.drpac.attendapp;
+package com.example.drpac.attendApp;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 
 public class AdministratorDashboard extends AppCompatActivity {
 
@@ -14,6 +12,8 @@ public class AdministratorDashboard extends AppCompatActivity {
     Button requestNewClass;
     Button deleteClass;
     Button getAttendanceRecord;
+    String username;
+    String password;
 
 
     /**
@@ -24,6 +24,8 @@ public class AdministratorDashboard extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.administrator_dashboard_layout);
 
+        username = getIntent().getStringExtra("USERNAME");
+        password = getIntent().getStringExtra("PASSWORD");
         startAttendance = (Button) findViewById(R.id.startAttendance);
         requestNewClass = (Button) findViewById(R.id.requestClass);
         deleteClass = (Button) findViewById(R.id.deleteClass);
