@@ -14,7 +14,7 @@
     <string name="registerAccount">Register</string>
     <string name="inputPasswordCheck">Password (Check)</string>
     <string name="inputName">Input full name</string>
-s
+
     <string name="start_attendance_period">Begin Attendance Period</string>
     <string name="request_class">Request Class</string>
     <string name="delete_class">Delete Class</string>
@@ -23,5 +23,6 @@ s
     <string name="time_in_minutes">Time (minutes)</string>
     <string name="beginAttendancePeriod">Begin period</string>
     <string name="cancelAttendancePeriod">Cancel period</string>
+    <string name="create_class">Create Class</string>
 
 </resources>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/create_class"
+        android:id="@+id/beginAttendancePeriod"
+        android:layout_below="@+id/timeField"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="42dp"
+        android:onClick="AdministratorNewClass.createClass"/>
+
+    <EditText android:id="@+id/studentList"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:hint="Replace me"
+        android:layout_marginTop="104dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/timeField"
+        android:layout_alignStart="@+id/timeField" />
+
+    <TextView
+        android:id="@+id/newClassText"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/studentList"/>
+
+</RelativeLayout>

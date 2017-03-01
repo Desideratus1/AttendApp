@@ -28,11 +28,11 @@
         android:layout_width="250dp"
         android:layout_height="75dp"
         android:text="@string/delete_class"
-        android:id="@+id/deleteClass"
+        android:id="@+id/delete_class"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="42dp" />
     <Button
-        android:layout_below="@+id/deleteClass"
+        android:layout_below="@+id/delete_class"
         android:layout_width="250dp"
         android:layout_height="75dp"
         android:text="@string/get_attendance_records"

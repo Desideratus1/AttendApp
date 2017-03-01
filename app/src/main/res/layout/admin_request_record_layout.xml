@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/request_record_text"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="Request Record"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="21dp"
+        android:id="@+id/request_record"
+        android:layout_above="@+id/request_record_text"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:text="Class name"
+        android:ems="10"
+        android:id="@+id/class_name"
+        android:layout_marginBottom="13dp"
+        android:layout_above="@+id/request_record"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:text="Full email (@gmail...)"
+        android:ems="10"
+        android:id="@+id/request_record_email"
+        android:layout_marginBottom="13dp"
+        android:layout_above="@+id/request_record"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>
