@@ -23,7 +23,5 @@ Reference for the Java files
  * Logins - Need to actually send data to and from the Raspberry Pi containing login information. Also need to determine if the user is a teacher or not.
  * Register - Same as Logins, we need to send data to and from. Differentiating between teachers and students may be done with a checkbox
  * StudentDashboard - Sending data to and from Raspberry Pi. Also needs to get the GPS coordinates of the Raspberry Pi and the student to tell exactly how far away they even are. Problem being how accurate is the GPS system that Google uses, and how do we translate longitude and latitude into a distance from one object to another?
- * AdministratorDashboard - None of the buttons currently function
  * GENERAL - Raspberry Pi communication, encryption. BACK BUTTONS must be placed everywhere.
- * All administrator functions are currently non-fuctional. Should be changed soon enough.
  * DOCUMENTATION MUST OCCUR BEFORE TOO MUCH PROGRESS IS MADE.
