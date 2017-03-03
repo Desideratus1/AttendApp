@@ -28,7 +28,7 @@ public class AdministratorDashboard extends AppCompatActivity {
         password = getIntent().getStringExtra("PASSWORD");
         startAttendance = (Button) findViewById(R.id.startAttendance);
         requestNewClass = (Button) findViewById(R.id.requestClass);
-        deleteClass = (Button) findViewById(R.id.deleteClass);
+        deleteClass = (Button) findViewById(R.id.delete_class);
         getAttendanceRecord = (Button) findViewById(R.id.getAttendanceRecords);
 
         //Whenever a certain button is clicked, do the function

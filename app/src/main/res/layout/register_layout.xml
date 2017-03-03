@@ -9,7 +9,7 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:hint="@string/inputUsername"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="23dp"
         android:layout_centerHorizontal="true" />
 
     <EditText android:id="@+id/password"
@@ -18,7 +18,7 @@
         android:inputType="textPassword"
         android:layout_height="wrap_content"
         android:hint="@string/inputPassword"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="23dp"
         android:layout_centerHorizontal="true" />
 
     <EditText android:id="@+id/passwordCheck"
@@ -26,7 +26,7 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:hint="@string/inputPasswordCheck"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="23dp"
         android:layout_centerHorizontal="true"
         android:inputType="textPassword" />
 
@@ -35,23 +35,36 @@
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:hint="@string/inputName"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="23dp"
         android:layout_centerHorizontal="true" />
 
-    <Button
-        android:layout_width="200dp"
-        android:layout_below="@+id/fullName"
-        android:layout_height="50dp"
-        android:text="@string/registerAccount"
-        android:id="@+id/createAccount"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="42dp" />
-
     <CheckBox
-        android:layout_toRightOf="@+id/createAccount"
         android:layout_width="200dp"
         android:layout_height="50dp"
         android:text="@string/isTeacher"
-        android:id="@+id/isTeacher"/>
+        android:id="@+id/isTeacher"
+        android:layout_below="@+id/fullName"
+        android:layout_alignLeft="@+id/fullName"
+        android:layout_alignStart="@+id/fullName"
+        android:layout_marginTop="19dp" />
+
+    <Button
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:text="@string/registerAccount"
+        android:id="@+id/createAccount"
+        android:layout_below="@+id/isTeacher"
+        android:layout_alignLeft="@+id/isTeacher"
+        android:layout_alignStart="@+id/isTeacher"
+        android:layout_marginTop="30dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/createAccount"
+        android:layout_alignStart="@+id/createAccount"
+        android:layout_marginBottom="40dp"
+        android:id="@+id/registerText" />
 
 </RelativeLayout>
