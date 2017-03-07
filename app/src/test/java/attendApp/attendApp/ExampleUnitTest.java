@@ -1,4 +1,4 @@
-package com.example.drpac.attendApp;
+package attendApp.attendApp;
 
 import org.junit.Test;
 

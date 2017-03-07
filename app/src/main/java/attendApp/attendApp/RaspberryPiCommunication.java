@@ -1,4 +1,4 @@
-package com.example.drpac.attendApp;
+package attendApp.attendApp;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -21,6 +21,7 @@ import java.net.Socket;
  */
 
 /*RESPONSE CODE LISTING 0-99
+0: General Success
 1: The user is a Student
 2: The user is a Teacher
 /*ERROR CODE LISTING: 100-???

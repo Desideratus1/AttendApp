@@ -1,4 +1,4 @@
-package com.example.drpac.attendApp;
+package attendApp.attendApp;
 
 import android.Manifest;
 import android.content.Intent;
@@ -19,11 +19,12 @@ import android.widget.TextView;
 public class StudentDashboard extends AppCompatActivity {
 
     Button submitAttendance;
-    TextView success;
-    TextView fail;
+    TextView response;
     private LocationManager locManager;
     private LocationListener locListener;
     Location loc;
+    RaspberryPiCommunication comm = new RaspberryPiCommunication();
+    String username;
 
     /**
      * Called when the activity is first created.
@@ -34,7 +35,8 @@ public class StudentDashboard extends AppCompatActivity {
         setContentView(R.layout.student_dashboard_layout);
 
         submitAttendance = (Button) findViewById((R.id.submit_attendance));
-        success = (TextView) findViewById(R.id.attendance_success);
+        response = (TextView) findViewById(R.id.attendance_success);
+        username = getIntent().getStringExtra("USERNAME");
         locManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locListener = new LocationListener() {
             @Override
@@ -69,30 +71,16 @@ public class StudentDashboard extends AppCompatActivity {
             return;
         }
 
-        success.setVisibility(View.INVISIBLE);
-        fail = (TextView) findViewById(R.id.attendance_fail);
-        fail.setVisibility(View.INVISIBLE);
-
         submitAttendance.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View view) {
                         locManager.requestLocationUpdates("gps", 5000, 0, locListener); //This is handled
-                        //Set both the success text and fail text to invisible
-                        success.setVisibility(View.INVISIBLE);
-                        fail.setVisibility(View.INVISIBLE);
-                        if(submitAttendance("admin")) {
+                        if(submitAttendance()) {
                             /*
                             TODO: replace "admin" with the full name of their account.
                              */
                             //If their full name exists, mark them as here and give the "SUCCESS" text
-                            success.setVisibility(View.VISIBLE);
-                            fail.setVisibility(View.INVISIBLE);
-                        }
-                        else {
-                            //Otherwise they failed but...
-                            //TODO: Maybe tell them why it failed? Too far away?
-                            fail.setVisibility(View.VISIBLE);
-                            success.setVisibility(View.INVISIBLE);
+                            response.setText("Attendance Recieved");
                         }
                     }
                 });
@@ -103,21 +91,33 @@ public class StudentDashboard extends AppCompatActivity {
         switch(requestCode) {
             case 10:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    submitAttendance("admin");
+                    submitAttendance();
         }
     }
 
     //Return true if successfully submitted
-    private boolean submitAttendance(String username) {
+    private boolean submitAttendance() {
+
+        Boolean b = comm.sendDataToRaspberryPi("2&" + username);
+        if(!b) {
+            response.setText("Data could not be sent");
+            return false;
+        }
+
+        String[] split = comm.getDataFromRaspberryPi();
+        int code = Integer.parseInt(split[0]);
+        if(code > 99) { //100+ is an error
+            response.setText(split[1]);
+            return false;
+        }
+        return true;
         /*
         TODO: Replace this with data sent to and from the Raspberry Pi
         WHAT IS BEING SENT:
-            Full name
+            Username
         WHAT IS BEING RECIEVED:
             Boolean stating whether or not the attendance for that name has succeeded
          */
-
-        return (username.equals("admin"));
     }
 }
 

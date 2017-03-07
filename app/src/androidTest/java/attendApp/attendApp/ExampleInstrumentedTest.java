@@ -1,4 +1,4 @@
-package com.example.drpac.attendApp;
+package attendApp.attendApp;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

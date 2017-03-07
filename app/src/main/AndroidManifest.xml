@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.drpac.attendApp" >
+    package="attendApp.attendApp" >
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.example.drpac.attendApp.LoginActivity"
+            android:name="attendApp.attendApp.LoginActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,27 +25,27 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.example.drpac.attendApp.StudentDashboard"
+            android:name="attendApp.attendApp.StudentDashboard"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.example.drpac.attendApp.AdministratorDashboard"
+            android:name="attendApp.attendApp.AdministratorDashboard"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.example.drpac.attendApp.AdministratorAttendancePeriod"
+            android:name="attendApp.attendApp.AdministratorAttendancePeriod"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.example.drpac.attendApp.AdministratorDeleteClass"
+            android:name="attendApp.attendApp.AdministratorDeleteClass"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.example.drpac.attendApp.AdministratorNewClass"
+            android:name="attendApp.attendApp.AdministratorNewClass"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.example.drpac.attendApp.RegisterActivity"
+            android:name="attendApp.attendApp.RegisterActivity"
             android:label="@string/app_name" >
         </activity>
     </application>
