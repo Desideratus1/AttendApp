@@ -73,7 +73,7 @@ public class RegisterActivity extends AppCompatActivity {
             if(isTeacher.isChecked()) isT = 1;
             else isT = 0;
 
-            Boolean b = comm.sendDataToRaspberryPi(username + "&" + password + "&" + fullName + "&" + isT);
+            Boolean b = comm.sendDataToRaspberryPi("1&" + username + "&" + password + "&" + fullName + "&" + isT);
             if(!b) {
                 registerFailed.setText("Data could not be sent");
                 return;

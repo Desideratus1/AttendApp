@@ -9,6 +9,17 @@ import java.net.Socket;
  * Created by drpac on 3/3/2017.
  */
 
+/*MESSAGE LISTING
+0: Login request
+1: Register Request
+2: Student Submit Attendance Request
+3: Administrator Begin Attendance Period
+4: Administrator Cancel Attendance Period
+5: Administrator Create New Class Request
+6: Administrator Delete Class Request
+7: Administrator Get Attendance Record Request
+ */
+
 /*RESPONSE CODE LISTING 0-99
 1: The user is a Student
 2: The user is a Teacher
