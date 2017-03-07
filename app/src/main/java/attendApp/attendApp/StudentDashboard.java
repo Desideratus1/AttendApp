@@ -76,10 +76,6 @@ public class StudentDashboard extends AppCompatActivity {
                     public void onClick(View view) {
                         locManager.requestLocationUpdates("gps", 5000, 0, locListener); //This is handled
                         if(submitAttendance()) {
-                            /*
-                            TODO: replace "admin" with the full name of their account.
-                             */
-                            //If their full name exists, mark them as here and give the "SUCCESS" text
                             response.setText("Attendance Recieved");
                         }
                     }
@@ -112,12 +108,9 @@ public class StudentDashboard extends AppCompatActivity {
         }
         return true;
         /*
-        TODO: Replace this with data sent to and from the Raspberry Pi
-        WHAT IS BEING SENT:
-            Username
-        WHAT IS BEING RECIEVED:
-            Boolean stating whether or not the attendance for that name has succeeded
-         */
+        TODO: This whole thing with the setText needs to be redone. Remove the boolean part from submitAttendance()
+        May god have mercy on the soul that attempts this
+        */
     }
 }
 

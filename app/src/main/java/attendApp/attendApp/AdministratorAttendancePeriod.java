@@ -15,6 +15,8 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
     Button beginAttendancePeriod;
     Button cancelAttendancePeriod;
     TextView attendanceText;
+    RaspberryPiCommunication comm = new RaspberryPiCommunication();
+    String username;
 
     /**
      * Called when the activity is first created.
@@ -29,6 +31,7 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
         beginAttendancePeriod = (Button) findViewById(R.id.beginAttendancePeriod);
         cancelAttendancePeriod = (Button) findViewById(R.id.cancelAttendancePeriod);
         attendanceText = (TextView) findViewById(R.id.attendancePeriodTexts);
+        username = getIntent().getStringExtra("USERNAME");
 
         beginAttendancePeriod.setOnClickListener( //Whenever the login button is pressed
                 new View.OnClickListener() {
@@ -60,16 +63,23 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
             return;
         }
         String name = className.getText().toString();
+
+        Boolean b = comm.sendDataToRaspberryPi(
+                "3&" + username + "&" + timeField.getText().toString() + "&" + className.getText().toString()
+        );
+        if(!b) {
+            attendanceText.setText("Data could not be sent");
+            return;
+        }
+
+        String[] split = comm.getDataFromRaspberryPi();
+        int code = Integer.parseInt(split[0]);
+        if(code > 99) { //100+ is an error
+            attendanceText.setText(split[1]);
+            return;
+        }
+
         attendanceText.setText("Success!");
-        /*
-        TODO: SEND THESE TO THE RASPBERRY PI
-            WHAT WE SEND:
-                INTEGER: TIME IN SECONDS
-                STRING: NAME
-            WHAT WE GET:
-                BOOLEAN: successful?
-        TODO: MAKE TEXT IF IT SUCCEEDS IN STARTING
-         */
     }
 
     /**
@@ -78,12 +88,26 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
      * @param view
      */
     private void cancelPeriod(View view) {
+        String name = className.getText().toString();
+
+        Boolean b = comm.sendDataToRaspberryPi(
+                "4&" + username + "&cancel"
+        );
+        if(!b) {
+            attendanceText.setText("Data could not be sent");
+            return;
+        }
+
+        String[] split = comm.getDataFromRaspberryPi();
+        int code = Integer.parseInt(split[0]);
+        if(code > 99) { //100+ is an error
+            attendanceText.setText(split[1]);
+            return;
+        }
+        attendanceText.setText("Success!");
         /*
-        TODO: CANCEL THE PERIOD THROUGH RASPBERRY PI
-            WHAT WE SEND: NOTHING
-            WHAT WE GET: BOOLEAN
-        TODO: MAKE TEXT IF IT SUCCEEDS IN ENDING
-         */
+        TODO: ATTENDANCE PERIOD NEEDS ERRORS (ATTENDANCE PERIOD ALREADY BEGAN ETC.)
+        */
     }
 
 

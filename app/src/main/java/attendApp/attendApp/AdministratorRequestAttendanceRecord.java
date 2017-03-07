@@ -16,6 +16,8 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
     TextView requestRecordText;
     EditText className;
     EditText email;
+    RaspberryPiCommunication comm = new RaspberryPiCommunication();
+    String username;
 
     /**
      * Called when the activity is first created.
@@ -30,7 +32,7 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
         requestRecordText = (TextView) findViewById(R.id.request_record_text);
         className = (EditText) findViewById(R.id.class_name);
         email = (EditText) findViewById(R.id.request_record_email);
-        requestRecordText.setVisibility(View.INVISIBLE);
+        username = getIntent().getStringExtra("USERNAME");
 
         requestRecord.setOnClickListener(
                 new View.OnClickListener() {
@@ -43,6 +45,23 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
     private void requestRecord(View view) {
         String cl = className.getText().toString();
         String em = email.getText().toString();
+
+        Boolean b = comm.sendDataToRaspberryPi(
+                "7&" + username + "&" + className.getText().toString()
+        );
+        if(!b) {
+            requestRecordText.setText("Data could not be sent");
+            return;
+        }
+
+        String[] split = comm.getDataFromRaspberryPi();
+        int code = Integer.parseInt(split[0]);
+        if(code > 99) { //100+ is an error
+            requestRecordText.setText(split[1]);
+            return;
+        }
+        requestRecordText.setText("Success!");
+
         /*
         TODO: SEND THIS STUFF TO THE PI
             WHAT WE SEND:

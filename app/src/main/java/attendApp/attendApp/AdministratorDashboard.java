@@ -61,19 +61,31 @@ public class AdministratorDashboard extends AppCompatActivity {
     //All these 4 functions do is tell us where to go when a button is pressed.
     //TODO: Actually make these classes do something.
     private void beginAttendancePeriod(View view) {
-        startActivity(new Intent(AdministratorDashboard.this, AdministratorAttendancePeriod.class));
+        Intent k = new Intent(AdministratorDashboard.this, AdministratorAttendancePeriod.class);
+        k.putExtra("USERNAME", username);
+        k.putExtra("PASSWORD", password);
+        startActivity(k);
     }
 
     private void createNewClass(View view) {
-        startActivity(new Intent(AdministratorDashboard.this, AdministratorNewClass.class));
+        Intent k = new Intent(AdministratorDashboard.this, AdministratorNewClass.class);
+        k.putExtra("USERNAME", username);
+        k.putExtra("PASSWORD", password);
+        startActivity(k);
     }
 
     private void deleteClass(View view) {
-        startActivity(new Intent(AdministratorDashboard.this, AdministratorDeleteClass.class));
+        Intent k = new Intent(AdministratorDashboard.this, AdministratorNewClass.class);
+        k.putExtra("USERNAME", username);
+        k.putExtra("PASSWORD", password);
+        startActivity(k);
     }
 
     private void getAttendanceRecord(View view) {
-        startActivity(new Intent(AdministratorDashboard.this, AdministratorAttendancePeriod.class));
+        Intent k = new Intent(AdministratorDashboard.this, AdministratorRequestAttendanceRecord.class);
+        k.putExtra("USERNAME", username);
+        k.putExtra("PASSWORD", password);
+        startActivity(k);
     }
 }
 

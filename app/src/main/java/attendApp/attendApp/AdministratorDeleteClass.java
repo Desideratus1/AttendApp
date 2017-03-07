@@ -15,6 +15,8 @@ public class AdministratorDeleteClass extends AppCompatActivity {
     Button deleteClass;
     TextView deleteClassText;
     EditText className;
+    RaspberryPiCommunication comm = new RaspberryPiCommunication();
+    String username;
 
     /**
      * Called when the activity is first created.
@@ -28,6 +30,7 @@ public class AdministratorDeleteClass extends AppCompatActivity {
         deleteClass = (Button) findViewById(R.id.delete_class);
         deleteClassText = (TextView) findViewById(R.id.delete_class_text);
         className = (EditText) findViewById(R.id.class_name);
+        username = getIntent().getStringExtra("USERNAME");
 
         deleteClassText.setVisibility(View.INVISIBLE);
 
@@ -41,11 +44,19 @@ public class AdministratorDeleteClass extends AppCompatActivity {
 
     private void deleteClass(View view) {
         String cl = className.getText().toString();
+
+        Boolean b = comm.sendDataToRaspberryPi(
+                "6&" + username + "&" + className.getText().toString()
+        );
+        if(!b) {
+            deleteClassText.setText("Data could not be sent");
+            return;
+        }
+
+        String[] response = comm.getDataFromRaspberryPi();
+        deleteClassText.setText(response[1]);
         /*
-        TODO: SEND THIS STUFF TO THE PI
-            WHAT WE SEND:
-                STRING: USERNAME
-            WHAT WE GET: BOOLEAN SAYING IF IT WAS SUCCESSFUL
-         */
+        TODO: Obviously things need to be done here. Errors and stuff
+        */
     }
 }
