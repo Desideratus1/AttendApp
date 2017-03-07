@@ -15,6 +15,7 @@ public class LoginActivity extends AppCompatActivity {
     EditText usernameField;
     EditText passwordField;
     TextView loginFailed;
+    RaspberryPiCommunication comm = new RaspberryPiCommunication();
 
 
     /**
@@ -30,8 +31,8 @@ public class LoginActivity extends AppCompatActivity {
         usernameField = (EditText) findViewById(R.id.username);
         passwordField = (EditText) findViewById(R.id.password);
         loginFailed = (TextView) findViewById(R.id.loginFailed);
-        loginFailed.setVisibility(View.INVISIBLE);
-        loginFailed.setText("Login has failed, check username and password");
+        loginFailed.setVisibility(View.VISIBLE);
+        loginFailed.setText("");
 
         loginButton.setOnClickListener( //Whenever the login button is pressed
                 new View.OnClickListener() {
@@ -45,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
                         Intent n = new Intent(LoginActivity.this, RegisterActivity.class);
                         n.putExtra("USERNAME", usernameField.getText().toString());
                         n.putExtra("PASSWORD", passwordField.getText().toString());
+                        //socket.close();
                         startActivity(n);
                     }
                 });
@@ -58,19 +60,24 @@ public class LoginActivity extends AppCompatActivity {
     private byte usernameAndPasswordMatch(View view) {
         String username = usernameField.getText().toString();
         String password = passwordField.getText().toString();
-        if (username.equals("admin") && password.equals("admin")){
-            return 2;
+        String[] split;
+
+        Boolean b = comm.sendDataToRaspberryPi(username + "&" + password);
+        if(!b) {
+            loginFailed.setText("Data could not be sent");
+            return 0;
         }
-        else if (username.equals("student") && password.equals("student")){
-            return 1;
-        }
-        else return 0;
+
+        split = comm.getDataFromRaspberryPi();
+        int code = Integer.parseInt(split[0]);
+        loginFailed.setText(split[1]);
+        return (byte) code;
         /*
         TODO: REPLACE THIS CODE WITH DATA SENT TO AND FROM THE RASPBERRY PI
         //WHAT IS BEING SENT:
             Username, Password
           WHAT IS BEING RECIEVED:
-            A byte. 1 means they are a student, 2 means they are a teacher. ANY OTHER NUMBER IS AN ERROR.
+            A byte. 1 means they are a student, 2 means they are a teacher. ANY OTHER NUMBER IS AN ERROR HERE.
          */
     }
 
@@ -80,18 +87,16 @@ public class LoginActivity extends AppCompatActivity {
                 Intent n = new Intent(LoginActivity.this, StudentDashboard.class);
                 n.putExtra("USERNAME", usernameField.getText().toString());
                 n.putExtra("PASSWORD", passwordField.getText().toString());
+                comm.end(); //Kill the socket connecting to the RASPBI
                 startActivity(n);
                 break;
             case 2:
                 Intent k = new Intent(LoginActivity.this, AdministratorDashboard.class);
                 k.putExtra("USERNAME", usernameField.getText().toString());
                 k.putExtra("PASSWORD", passwordField.getText().toString());
+                comm.end();
                 startActivity(k);
                 break;
-            case 3:
-
-            //TODO: Errors on login. Bad combo
         }
     }
 }
-
