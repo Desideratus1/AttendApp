@@ -7,7 +7,7 @@ What is this I don't even?
 Where is everything?
 
   Java files containing the various Activities and other files are located within
-  * AttendApp/app/src/main/java/com/example/drpac/attendapp/
+  * AttendApp/app/src/main/java/attendApp/attendApp/
   
 Confusing but unavoidable for now.
   Layout files are located in 
