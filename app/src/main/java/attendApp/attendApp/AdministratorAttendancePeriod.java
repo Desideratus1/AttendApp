@@ -91,7 +91,7 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
         String name = className.getText().toString();
 
         Boolean b = comm.sendDataToRaspberryPi(
-                "4&" + username + "&cancel"
+                "4&" + username
         );
         if(!b) {
             attendanceText.setText("Data could not be sent");

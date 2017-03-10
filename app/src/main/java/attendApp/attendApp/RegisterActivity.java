@@ -70,8 +70,8 @@ public class RegisterActivity extends AppCompatActivity {
             String password = passwordField.getText().toString();
             String fullName = fullNameField.getText().toString();
             int isT;
-            if(isTeacher.isChecked()) isT = 1;
-            else isT = 0;
+            if(isTeacher.isChecked()) isT = 1; //If they are a teacher this is one
+            else isT = 0; //Otherwise they're a student, 0
 
             Boolean b = comm.sendDataToRaspberryPi("1&" + username + "&" + password + "&" + fullName + "&" + isT);
             if(!b) {

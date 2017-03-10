@@ -10,9 +10,9 @@ import java.net.Socket;
  */
 
 /*MESSAGE LISTING
-0: Login request
-1: Register Request
-2: Student Submit Attendance Request
+0: Login request username&password
+1: Register Request username&password&name&is_teacher
+2: Student Submit Attendance Request username
 3: Administrator Begin Attendance Period
 4: Administrator Cancel Attendance Period
 5: Administrator Create New Class Request
@@ -27,6 +27,7 @@ import java.net.Socket;
 /*ERROR CODE LISTING: 100-???
 100: Failure to get a connection with the Raspberry Pi
 101: Failure to read from Raspberry Pi
+102: Bad request
  */
 
 public class RaspberryPiCommunication {
