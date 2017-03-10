@@ -10,14 +10,14 @@ import java.net.Socket;
  */
 
 /*MESSAGE LISTING
-0: Login request username&password
-1: Register Request username&password&name&is_teacher
-2: Student Submit Attendance Request username
-3: Administrator Begin Attendance Period
-4: Administrator Cancel Attendance Period
-5: Administrator Create New Class Request
-6: Administrator Delete Class Request
-7: Administrator Get Attendance Record Request
+0: Login request                                    username password
+1: Register Request                                 username password name is_teacher
+2: Student Submit Attendance Request                username
+3: Administrator Begin Attendance Period            username time classname
+4: Administrator Cancel Attendance Period           username
+5: Administrator Create New Class Request           username classname
+6: Administrator Delete Class Request               username classname
+7: Administrator Get Attendance Record Request      username classname
  */
 
 /*RESPONSE CODE LISTING 0-99
