@@ -27,13 +27,13 @@ public class Server {
     */
 
     public Server() throws IOException {
-        ServerSocket socketServer = new ServerSocket(1420);
+        socketServer = new ServerSocket(1420);
     }
 
     public void GetNextRequest() throws IOException {
         Socket clientSocket = socketServer.accept(); //This is blocking. It will wait.
-        DataInputStream DIS = new DataInputStream(clientSocket.getInputStream());
-        DataOutputStream DOS = new DataOutputStream(clientSocket.getOutputStream());
+        DIS = new DataInputStream(clientSocket.getInputStream());
+        DOS = new DataOutputStream(clientSocket.getOutputStream());
 
         serveRequest(DIS.readUTF());
     }

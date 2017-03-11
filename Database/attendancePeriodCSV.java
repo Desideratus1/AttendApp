@@ -1,4 +1,4 @@
-package RaspPiSide;
+package raspPiSide;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,7 +13,7 @@ public class attendancePeriodCSV {
 	String[] period;
 	ArrayList<String[]> data = new ArrayList<String[]>();
 	
-	public CSVFile(String fileNameWithPath) throws FileNotFoundException {
+	public attendancePeriodCSV(String fileNameWithPath) throws FileNotFoundException {
 		file = new File(fileNameWithPath);
 		heds = new ArrayList<String>();
 		
@@ -51,6 +51,12 @@ public class attendancePeriodCSV {
 		if (index == -1) return; //error
 		
 		period[index] = "1";
+	}
+	
+	void write() throws IOException {
+		FileWriter writer = new FileWriter(file);
+		writer.write(toString());
+		writer.close();
 	}
 	
 	public String toString() {
