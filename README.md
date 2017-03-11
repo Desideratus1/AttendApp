@@ -16,7 +16,7 @@ Confusing but unavoidable for now.
 These contain the buttons, text fields etc. that dictate where each the various pieces of the activity are located.
   
 Reference for the Java files
-  LoginActivity.java is the first java file loaded into the program and its corresponding layout (login_layout) will be the first screen the user sees. AdministratorDashboard currently does not have any functionality and remains untested.
+  LoginActivity.java is the first java file loaded into the program and its corresponding layout (login_layout) will be the first screen the user sees.
   
   General TODO.
   
