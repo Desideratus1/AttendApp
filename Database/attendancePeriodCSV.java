@@ -46,11 +46,18 @@ public class attendancePeriodCSV {
 		writer.close();
 	}
 	
-	void submitAttendance(String name) {
+	void cancelAttendancePeriod() throws IOException {
+		FileWriter writer = new FileWriter(file);
+		writer.write(toString());
+		writer.close();
+	}
+	
+	boolean submitAttendance(String name) {
 		int index = heds.indexOf(name);
-		if (index == -1) return; //error
+		if (index == -1) return false; //error
 		
 		period[index] = "1";
+		return true;
 	}
 	
 	void write() throws IOException {
