@@ -28,6 +28,15 @@ import java.net.Socket;
 100: Failure to get a connection with the Raspberry Pi
 101: Failure to read from Raspberry Pi
 102: Bad request
+103: Username and password did not match
+104: Error retrieving usernames, probably fatal
+105: No current active attendance period
+106: Student not found in class
+107: Teacher does not have access
+
+200: Not working (new class)
+201: Not working (delete class)
+202: Not working (Get record)
  */
 
 public class RaspberryPiCommunication {
