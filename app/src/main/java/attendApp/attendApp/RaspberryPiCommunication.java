@@ -33,6 +33,7 @@ import java.net.Socket;
 105: No current active attendance period
 106: Student not found in class
 107: Teacher does not have access
+108: There is an active attendance period
 
 200: Not working (new class)
 201: Not working (delete class)
