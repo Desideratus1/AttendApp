@@ -3,6 +3,7 @@ package Database;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
@@ -12,9 +13,13 @@ public class Server {
 
     ServerSocket socketServer;
     Socket clientSocket;
-    DataInputStream DIS;
+    BufferedReader DIS;
     DataOutputStream DOS;
     LoginsCSV logins;
+
+	String PATH = "";
+	String LOGINS_EXTENTION = ".txt";
+	String ATTENDANCE_EXTENTION = ".txt";
     
     String pathToFolder;
     String currentActiveAttendancePeriodClassName;
@@ -38,16 +43,16 @@ public class Server {
         logins = new LoginsCSV("un.txt");
     }
 
-    public void GetNextRequest() throws IOException {
+    public void getNextRequest() throws IOException {
         Socket clientSocket = socketServer.accept(); //This is blocking. It will wait.
         DOS = new DataOutputStream(clientSocket.getOutputStream());
         
-        BufferedReader d = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        serveRequest(d.readLine());
+        DIS = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        serveRequest(DIS.readLine());
     }
 
     private void serveRequest(String in) throws IOException {
-
+		checkAttendancePeriod();
         String[] split = in.split("&");
         int code;
         try {
@@ -122,7 +127,7 @@ public class Server {
                 }
                 
                 break;
-            case 3: //Begin attendance -------------NOT DONE YET, FIX IT FIX IT FIX IT
+            case 3: //Begin attendance period
                 if (split.length != 4) {
                     DOS.writeChars("102&Bad request");
                     return;
@@ -136,7 +141,21 @@ public class Server {
                     realTimeInSeconds = Integer.parseInt(timeAsStr);
                 } catch(Exception e) {
                     DOS.writeChars("102&Bad request");
+					return;
                 }
+
+				user = logins.getUser(username);
+				if(user == null) {
+					DOS.writeChars("104&Error retrieving account");
+					return;
+				}
+
+				activePeriod = new attendancePeriodCSV(PATH + className + ATTENDANCE_EXTENTION, realTimeInSeconds);
+				if(activePeriod == null) {
+					DOS.writeChars("109&Class does not exist");
+					return;
+				}
+				activePeriod.beginAttendancePeriod();
 
                     break;
             case 4: //Cancel attendance
@@ -157,29 +176,50 @@ public class Server {
                 	DOS.writeChars("104&Error retrieving account");
                 	return;
                 }
-                
-                String[] classList = user.getClassList();
-                for(String cl : classList) {
-                	if(cl.equals(currentActiveAttendancePeriodClassName)) {
-                		activePeriod.cancelAttendancePeriod();
-                		DOS.writeChars("0&Success!");
-                	}
-                }
+
+				if (user.hasAccessToClass(currentActiveAttendancePeriodClassName)) {
+					activePeriod.cancelAttendancePeriod();
+					DOS.writeChars("0&Success!");
+					return;
+				}
+
                 DOS.writeChars("107&You don't have access to this class");
                 
                 break;
             case 5: //Create new class AHAHHHHHHHHHHHHHHHHHHHHHHHHH
                 DOS.writeChars("200&Create new class bad");
                 break;
-            case 6: //Delete class FIX IT FIX IT FIX ITIIITITITTITITIT
+            case 6:
                 if (split.length != 3) {
                     DOS.writeChars("102&Bad request");
                     return;
                 }
                 username = split[1];
                 className = split[2];
-                DOS.writeChars("201&Delete class bad");
-                
+
+				if(activePeriod != null) {
+					DOS.writeChars("108&There is an active attendance period");
+					return;
+				}
+
+				user = logins.getUser(username);
+				if(user == null) {
+					DOS.writeChars("104&Failure to retrieve account");
+					return;
+				}
+
+				if(user.hasAccessToClass(className)) {
+					File file = new File(PATH + className + ATTENDANCE_EXTENTION);
+					if(file.exists()) {
+						file.delete();
+						DOS.writeChars("0&Success!");
+						return;
+					} else {
+						DOS.writeChars("109&The class doesn't exist!");
+						return;
+					}
+				}
+				DOS.writeChars("107&You do not have access");
                 break;
             case 7: //Get record
                 if (split.length != 3) {
@@ -195,4 +235,13 @@ public class Server {
 
         }
     }
+
+	private void checkAttendancePeriod() {
+		if(activePeriod == null) return;
+		else try {
+			activePeriod.endAttendancePeriod();
+		} catch (IOException e) {
+			return;
+		}
+	}
 }

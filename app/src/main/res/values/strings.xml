@@ -24,5 +24,6 @@
     <string name="beginAttendancePeriod">Begin period</string>
     <string name="cancelAttendancePeriod">Cancel period</string>
     <string name="create_class">Create Class</string>
+    <string name="class_name">Class name</string>
 
 </resources>

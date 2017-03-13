@@ -1,8 +1,10 @@
 package attendApp.attendApp;
 
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 
 /**
@@ -34,6 +36,7 @@ import java.net.Socket;
 106: Student not found in class
 107: Teacher does not have access
 108: There is an active attendance period
+109: The class does not exist
 
 200: Not working (new class)
 201: Not working (delete class)
@@ -41,11 +44,11 @@ import java.net.Socket;
  */
 
 public class RaspberryPiCommunication {
-    String RASPBERRY_PI_IP = "";
-    int RASPBERRY_PI_PORT = 0;
-    Socket socket;
-    DataOutputStream DOS;
-    BufferedReader DIS;
+    private String RASPBERRY_PI_IP = "";
+    private int RASPBERRY_PI_PORT = 0;
+    private Socket socket;
+    private DataOutputStream DOS;
+    private BufferedReader DIS;
 
 
     public RaspberryPiCommunication() {
@@ -67,8 +70,11 @@ public class RaspberryPiCommunication {
      */
     boolean sendDataToRaspberryPi(String toSend) {
         int tries = 0;
-        while(DOS == null && !reinitialize()) tries++;
-        if(tries == 20) return false;
+        while(DOS == null && !reinitialize()) {
+            tries++;
+            if (tries == 20) return false;
+        }
+
 
         try {
             DOS.writeChars(toSend);
@@ -111,7 +117,7 @@ public class RaspberryPiCommunication {
         try {
             socket = new Socket(RASPBERRY_PI_IP, RASPBERRY_PI_PORT);
             DOS = new DataOutputStream(socket.getOutputStream());
-            DIS = new DataInputStream(socket.getInputStream());
+            DIS = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch(Exception e) {
             socket = null;
             DOS = null;

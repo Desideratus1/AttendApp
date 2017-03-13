@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 
 public class attendancePeriodCSV {
@@ -12,12 +13,20 @@ public class attendancePeriodCSV {
 	ArrayList<String> heds = new ArrayList<String>();
 	String[] period;
 	ArrayList<String[]> data = new ArrayList<String[]>();
-	
-	public attendancePeriodCSV(String fileNameWithPath) throws FileNotFoundException {
+	long endTime;
+
+	public attendancePeriodCSV(String fileNameWithPath, int time) {
+		endTime = time;
+
 		file = new File(fileNameWithPath);
 		heds = new ArrayList<String>();
-		
-		Scanner scan = new Scanner(file);
+
+		Scanner scan;
+		try {
+			scan = new Scanner(file);
+		} catch (FileNotFoundException e) {
+			return;
+		}
 		String[] headers = scan.nextLine().split(",");
 		
 		for(String str : headers) {
@@ -31,6 +40,11 @@ public class attendancePeriodCSV {
 	}
 	
 	void beginAttendancePeriod() {
+
+		//86400 There are this many seconds in 1 day.
+		endTime = endTime + (new Date().getTime())/1000;
+		if(endTime > 86400) endTime = endTime % 86400;
+
 		period = new String[heds.size()];
 		for(int i = 0; i < period.length; i++) {
 			period[i] = "0";
@@ -40,6 +54,8 @@ public class attendancePeriodCSV {
 	}
 	
 	void endAttendancePeriod() throws IOException {
+		if(!isFinished()) return;
+
 		data.add(period);
 		FileWriter writer = new FileWriter(file);
 		writer.write(toString());
@@ -83,5 +99,9 @@ public class attendancePeriodCSV {
 			toReturn.append("\n");
 		}
 		return toReturn.toString();
+	}
+
+	boolean isFinished() {
+		return (endTime <= (new Date().getTime())/1000);
 	}
 }

@@ -20,14 +20,10 @@ public class User {
 	public String getUsername() {
 		return username;
 	}
+
+	public String getPassword() { return password; }
 	
-	public String getPassword() {
-		return username;
-	}
-	
-	public String getName() {
-		return username;
-	}
+	public String getName() { return fullName; }
 	
 	public boolean isTeacher() {
 		if(isTeacher.equals("1")) return true;
@@ -50,6 +46,10 @@ public class User {
 		}
 		toRet.deleteCharAt(toRet.length()-1);
 		return toRet.toString();
+	}
+
+	public boolean hasAccessToClass(String cl) {
+		return (classes.contains(cl));
 	}
 	
 }
