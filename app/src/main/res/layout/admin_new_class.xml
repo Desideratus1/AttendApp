@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/beginAttendancePeriod"
+        android:id="@+id/beginAttendancePeriod"
+        android:layout_below="@+id/timeField"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="42dp"
+        android:onClick="AdministratorAttendancePeriod.beginPeriod"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cancelAttendancePeriod"
+        android:id="@+id/cancelAttendancePeriod"
+        android:layout_below="@+id/beginAttendancePeriod"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="42dp"
+        android:onClick="AdministratorAttendancePeriod.cancelPeriod"/>
+
+    <TextView
+        android:id="@+id/attendancePeriodTexts"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/cancelAttendancePeriod"/>
+
+    <EditText android:id="@+id/timeField"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/time_in_minutes"
+        android:layout_below="@+id/classList"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="80dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="30dp" />
+
+    <EditText android:id="@+id/classList"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:hint="Class name"
+        android:layout_marginTop="104dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/timeField"
+        android:layout_alignStart="@+id/timeField" />
+
+</RelativeLayout>
