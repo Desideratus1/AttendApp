@@ -19,8 +19,6 @@ public class Server {
     String pathToFolder;
     String currentActiveAttendancePeriodClassName;
     attendancePeriodCSV activePeriod;
-
-
     /*
     public static void main(String[] args) throws IOException {
         ServerSocket socketServer = new ServerSocket(1420);
@@ -42,15 +40,13 @@ public class Server {
 
     public void GetNextRequest() throws IOException {
         Socket clientSocket = socketServer.accept(); //This is blocking. It will wait.
-        DIS = new DataInputStream(clientSocket.getInputStream());
         DOS = new DataOutputStream(clientSocket.getOutputStream());
-
-        BufferedReader r = new BufferedReader(new InputStreamReader(client));
-        serveRequest(DIS.readUTF());
+        
+        BufferedReader d = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        serveRequest(d.readLine());
     }
 
     private void serveRequest(String in) throws IOException {
-        checkAttendancePeriodTime();
 
         String[] split = in.split("&");
         int code;
@@ -167,7 +163,6 @@ public class Server {
                 	if(cl.equals(currentActiveAttendancePeriodClassName)) {
                 		activePeriod.cancelAttendancePeriod();
                 		DOS.writeChars("0&Success!");
-                        return;
                 	}
                 }
                 DOS.writeChars("107&You don't have access to this class");
@@ -193,11 +188,6 @@ public class Server {
                 }
                 username = split[1];
                 className = split[2];
-
-                if(currentActiveAttendancePeriodClassName != null) {
-                    DOS.writeChars("105& Active attendance period");
-                    return;
-                }
                 
                 String reponse = activePeriod.toString();
                 DOS.writeChars("202&Get record bad");

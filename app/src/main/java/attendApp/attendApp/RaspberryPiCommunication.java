@@ -45,14 +45,14 @@ public class RaspberryPiCommunication {
     int RASPBERRY_PI_PORT = 0;
     Socket socket;
     DataOutputStream DOS;
-    DataInputStream DIS;
+    BufferedReader DIS;
 
 
     public RaspberryPiCommunication() {
         try {
             socket = new Socket(RASPBERRY_PI_IP, RASPBERRY_PI_PORT);
             DOS = new DataOutputStream(socket.getOutputStream());
-            DIS = new DataInputStream(socket.getInputStream());
+            DIS = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch(Exception e) {
             socket = null;
             DOS = null;
@@ -71,7 +71,7 @@ public class RaspberryPiCommunication {
         if(tries == 20) return false;
 
         try {
-            DOS.writeUTF(toSend);
+            DOS.writeChars(toSend);
         } catch (IOException e) {
             return false;
         }
@@ -89,7 +89,7 @@ public class RaspberryPiCommunication {
 
         String toReturn;
         try {
-            toReturn = DIS.readUTF();
+            toReturn = DIS.readLine();
         } catch (Exception e) {
             return new String[] {"101", "Failure to read from Raspberry Pi"};
         }
