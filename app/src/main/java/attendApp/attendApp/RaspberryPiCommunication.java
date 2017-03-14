@@ -57,9 +57,7 @@ public class RaspberryPiCommunication {
             DOS = new DataOutputStream(socket.getOutputStream());
             DIS = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch(Exception e) {
-            socket = null;
-            DOS = null;
-            DIS = null;
+            e.printStackTrace();
         }
     }
 
@@ -75,10 +73,10 @@ public class RaspberryPiCommunication {
             if (tries == 20) return false;
         }
 
-
         try {
-            DOS.writeChars(toSend);
+            DOS.writeBytes(toSend + "\n");
         } catch (IOException e) {
+            e.printStackTrace();
             return false;
         }
         return true;
@@ -102,7 +100,7 @@ public class RaspberryPiCommunication {
 
         String[] split = toReturn.split("&");
         try {
-            int code = Integer.parseInt(split[0]);
+            Integer.parseInt(split[0]);
         } catch(Exception e) {
             return new String[] {"102","Bad response"};
         }
@@ -119,6 +117,7 @@ public class RaspberryPiCommunication {
             DOS = new DataOutputStream(socket.getOutputStream());
             DIS = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch(Exception e) {
+            e.printStackTrace();
             socket = null;
             DOS = null;
             DIS = null;

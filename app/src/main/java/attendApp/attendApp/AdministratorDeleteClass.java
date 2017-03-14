@@ -43,8 +43,6 @@ public class AdministratorDeleteClass extends AppCompatActivity {
     }
 
     private void deleteClass(View view) {
-        String cl = className.getText().toString();
-
         Boolean b = comm.sendDataToRaspberryPi(
                 "6&" + username + "&" + className.getText().toString()
         );

@@ -20,7 +20,10 @@ public class RegisterActivity extends AppCompatActivity {
     EditText fullNameField;
     CheckBox isTeacher;
     TextView registerFailed;
-    RaspberryPiCommunication comm = new RaspberryPiCommunication();
+    RaspberryPiCommunication comm;
+    boolean flag = false;
+    boolean wait = true;
+    String response = "Unknown failure";
 
     /**
      * Called when the activity is first created.
@@ -64,32 +67,48 @@ public class RegisterActivity extends AppCompatActivity {
      * @param view
      */
     private void register(View view) {
-        if (passwordsMatch(view)) {
-            //TODO: Data to and from Raspberry Pi, send them back to the login screen if they succeeded
-            String username = usernameField.getText().toString();
-            String password = passwordField.getText().toString();
-            String fullName = fullNameField.getText().toString();
-            int isT;
-            if(isTeacher.isChecked()) isT = 1; //If they are a teacher this is one
-            else isT = 0; //Otherwise they're a student, 0
-
-            Boolean b = comm.sendDataToRaspberryPi("1&" + username + "&" + password + "&" + fullName + "&" + isT);
-            if(!b) {
-                registerFailed.setText("Data could not be sent");
-                return;
-            }
-
-            String[] split = comm.getDataFromRaspberryPi();
-            int code = Integer.parseInt(split[0]);
-            if(code > 99) { //100+ is an error
-                registerFailed.setText(split[1]);
-                return;
-            }
-
-            comm.end(); //Kill the link
-            startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-
+        if (!passwordsMatch(view)) {
+            registerFailed.setText("Passwords do not match");
+            return;
         }
+        Thread networkThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //TODO: Data to and from Raspberry Pi, send them back to the login screen if they succeeded
+                    comm = new RaspberryPiCommunication();
+                    String username = usernameField.getText().toString();
+                    String password = passwordField.getText().toString();
+                    String fullName = fullNameField.getText().toString();
+                    int isT;
+                    if (isTeacher.isChecked()) isT = 1; //If they are a teacher this is one
+                    else isT = 0; //Otherwise they're a student, 0
+                    Boolean b = comm.sendDataToRaspberryPi("1&" + username + "&" + password + "&" + fullName + "&" + isT);
+                    if (!b) {
+                        response = "Data could not be sent";
+                        return;
+                    }
+
+                    String[] split = comm.getDataFromRaspberryPi();
+                    int code = Integer.parseInt(split[0]);
+                    if (code > 99) { //100+ is an error
+                        response = split[1];
+                        return;
+                    }
+
+                    comm.end(); //Kill the link
+                    flag = true;
+                    wait = false;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        networkThread.start();
+        while(wait);
+        wait = true;
+        if (flag) startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
+        else registerFailed.setText(response);
     }
 }
 
