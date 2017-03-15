@@ -17,6 +17,8 @@ public class AdministratorDeleteClass extends AppCompatActivity {
     EditText className;
     RaspberryPiCommunication comm = new RaspberryPiCommunication();
     String username;
+    String response = "Unknown failure";
+    boolean wait = true;
 
     /**
      * Called when the activity is first created.
@@ -43,18 +45,31 @@ public class AdministratorDeleteClass extends AppCompatActivity {
     }
 
     private void deleteClass(View view) {
-        Boolean b = comm.sendDataToRaspberryPi(
-                "6&" + username + "&" + className.getText().toString()
-        );
-        if(!b) {
-            deleteClassText.setText("Data could not be sent");
-            return;
-        }
+        Thread networkThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Boolean b = comm.sendDataToRaspberryPi(
+                            "6&" + username + "&" + className.getText().toString()
+                    );
+                    if(!b) {
+                        deleteClassText.setText("Data could not be sent");
+                        wait = false;
+                        return;
+                    }
 
-        String[] response = comm.getDataFromRaspberryPi();
-        deleteClassText.setText(response[1]);
-        /*
-        TODO: Obviously things need to be done here. Errors and stuff
-        */
+                    String[] response = comm.getDataFromRaspberryPi();
+                    deleteClassText.setText(response[1]);
+                    wait = false;
+                } catch (Exception e) {
+                    e.printStackTrace();
+					response = "Networking errors; Unable to connect to server";
+                }
+            }
+        });
+        while(wait);
+        wait = true;
+        networkThread.start();
+        deleteClassText.setText(response);
     }
 }

@@ -19,12 +19,15 @@ import android.widget.TextView;
 public class StudentDashboard extends AppCompatActivity {
 
     Button submitAttendance;
-    TextView response;
+    TextView attendanceResponse;
     private LocationManager locManager;
     private LocationListener locListener;
     Location loc;
     RaspberryPiCommunication comm = new RaspberryPiCommunication();
     String username;
+    String response = "Unknown failure";
+    boolean success = false;
+    boolean wait = true;
 
     /**
      * Called when the activity is first created.
@@ -35,7 +38,7 @@ public class StudentDashboard extends AppCompatActivity {
         setContentView(R.layout.student_dashboard_layout);
 
         submitAttendance = (Button) findViewById((R.id.submit_attendance));
-        response = (TextView) findViewById(R.id.attendance_success);
+        attendanceResponse = (TextView) findViewById(R.id.attendance_success);
         username = getIntent().getStringExtra("USERNAME");
         locManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         locListener = new LocationListener() {
@@ -75,8 +78,9 @@ public class StudentDashboard extends AppCompatActivity {
                 new View.OnClickListener() {
                     public void onClick(View view) {
                         locManager.requestLocationUpdates("gps", 5000, 0, locListener); //This is handled
-                        if(submitAttendance()) {
-                            response.setText("Attendance Recieved");
+                        submitAttendance();
+                        if(success) {
+                            attendanceResponse.setText("Attendance Recieved");
                         }
                     }
                 });
@@ -92,25 +96,38 @@ public class StudentDashboard extends AppCompatActivity {
     }
 
     //Return true if successfully submitted
-    private boolean submitAttendance() {
+    private void submitAttendance() {
+        Thread networkThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Boolean b = comm.sendDataToRaspberryPi("2&" + username);
+                    if(!b) {
+                        response = "Data could not be sent";
+                        wait = false;
+                        return;
+                    }
 
-        Boolean b = comm.sendDataToRaspberryPi("2&" + username);
-        if(!b) {
-            response.setText("Data could not be sent");
-            return false;
-        }
-
-        String[] split = comm.getDataFromRaspberryPi();
-        int code = Integer.parseInt(split[0]);
-        if(code > 99) { //100+ is an error
-            response.setText(split[1]);
-            return false;
-        }
-        return true;
-        /*
-        TODO: This whole thing with the setText needs to be redone. Remove the boolean part from submitAttendance()
-        May god have mercy on the soul that attempts this
-        */
+                    String[] split = comm.getDataFromRaspberryPi();
+                    int code = Integer.parseInt(split[0]);
+                    if(code > 99) { //100+ is an error
+                        response = split[1];
+                        wait = false;
+                        return;
+                    }
+                    success = true;
+                    wait = false;
+                    return;
+                } catch (Exception e) {
+                    e.printStackTrace();
+					response = "Networking errors; Unable to connect to server";
+                }
+            }
+        });
+        while(wait);
+        wait = true;
+        networkThread.start();
+        attendanceResponse.setText(response);
     }
 }
 

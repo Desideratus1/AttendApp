@@ -83,6 +83,7 @@ public class LoginActivity extends AppCompatActivity {
                     wait = false;
                 } catch (Exception e) {
                     e.printStackTrace();
+                    response = "Networking errors; Unable to connect to server";
                 }
             }
         });

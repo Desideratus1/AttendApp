@@ -86,6 +86,7 @@ public class RegisterActivity extends AppCompatActivity {
                     Boolean b = comm.sendDataToRaspberryPi("1&" + username + "&" + password + "&" + fullName + "&" + isT);
                     if (!b) {
                         response = "Data could not be sent";
+                        wait = false;
                         return;
                     }
 
@@ -93,6 +94,7 @@ public class RegisterActivity extends AppCompatActivity {
                     int code = Integer.parseInt(split[0]);
                     if (code > 99) { //100+ is an error
                         response = split[1];
+                        wait = false;
                         return;
                     }
 
@@ -101,6 +103,7 @@ public class RegisterActivity extends AppCompatActivity {
                     wait = false;
                 } catch (Exception e) {
                     e.printStackTrace();
+                    response = "Networking errors; Unable to connect to server";
                 }
             }
         });

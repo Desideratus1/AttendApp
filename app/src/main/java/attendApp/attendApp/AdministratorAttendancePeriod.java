@@ -17,6 +17,8 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
     TextView attendanceText;
     RaspberryPiCommunication comm = new RaspberryPiCommunication();
     String username;
+    String response = "Unknown error";
+    boolean wait = true;
 
     /**
      * Called when the activity is first created.
@@ -55,31 +57,49 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
      * @param view
      */
     private void beginPeriod(View view) {
-        int timeInSeconds;
-        try {
-            timeInSeconds = Integer.parseInt(timeField.getText().toString())*60;
-        } catch(Exception e) {
-            attendanceText.setText("The minutes you supplied is unusable.");
-            return;
-        }
-        String name = className.getText().toString();
+        Thread networkThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    while(wait);
+                    wait = true;
+                    int timeInSeconds;
+                    try {
+                        timeInSeconds = Integer.parseInt(timeField.getText().toString())*60;
+                    } catch(Exception e) {
+                        response = "The minutes you supplied is unusable.";
+                        wait = false;
+                        return;
+                    }
 
-        Boolean b = comm.sendDataToRaspberryPi(
-                "3&" + username + "&" + timeField.getText().toString() + "&" + className.getText().toString()
-        );
-        if(!b) {
-            attendanceText.setText("Data could not be sent");
-            return;
-        }
+                    Boolean b = comm.sendDataToRaspberryPi(
+                            "3&" + username + "&" + timeInSeconds + "&" + className.getText().toString()
+                    );
+                    if(!b) {
+                        response = "Data could not be sent";
+                        wait = false;
+                        return;
+                    }
 
-        String[] split = comm.getDataFromRaspberryPi();
-        int code = Integer.parseInt(split[0]);
-        if(code > 99) { //100+ is an error
-            attendanceText.setText(split[1]);
-            return;
-        }
+                    String[] split = comm.getDataFromRaspberryPi();
+                    int code = Integer.parseInt(split[0]);
+                    if(code > 99) { //100+ is an error
+                        response = split[1];
+                        wait = false;
+                        return;
+                    }
 
-        attendanceText.setText("Success!");
+                    attendanceText.setText("Success!");
+                    wait = false;
+                } catch (Exception e) {
+                    e.printStackTrace();
+					response = "Networking errors; Unable to connect to server";
+                }
+            }
+        });
+        while(wait);
+        networkThread.start();
+        attendanceText.setText(response);
     }
 
     /**
@@ -88,26 +108,38 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
      * @param view
      */
     private void cancelPeriod(View view) {
-        String name = className.getText().toString();
+        Thread networkThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    while(wait);
+                    wait = true;
+                    Boolean b = comm.sendDataToRaspberryPi(
+                            "4&" + username
+                    );
+                    if(!b) {
+                        response = "Data could not be sent";
+                        wait = false;
+                        return;
+                    }
 
-        Boolean b = comm.sendDataToRaspberryPi(
-                "4&" + username
-        );
-        if(!b) {
-            attendanceText.setText("Data could not be sent");
-            return;
-        }
-
-        String[] split = comm.getDataFromRaspberryPi();
-        int code = Integer.parseInt(split[0]);
-        if(code > 99) { //100+ is an error
-            attendanceText.setText(split[1]);
-            return;
-        }
-        attendanceText.setText("Success!");
-        /*
-        TODO: ATTENDANCE PERIOD NEEDS ERRORS (ATTENDANCE PERIOD ALREADY BEGAN ETC.)
-        */
+                    String[] split = comm.getDataFromRaspberryPi();
+                    int code = Integer.parseInt(split[0]);
+                    if(code > 99) { //100+ is an error
+                        response = split[1];
+                        wait = false;
+                        return;
+                    }
+                    response = "Success!";
+                    wait = false;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        while(wait);
+        networkThread.start();
+        attendanceText.setText(response);
     }
 
 

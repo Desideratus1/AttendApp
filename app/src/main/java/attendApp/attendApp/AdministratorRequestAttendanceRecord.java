@@ -18,6 +18,8 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
     EditText email;
     RaspberryPiCommunication comm = new RaspberryPiCommunication();
     String username;
+    String response = "Unknown failure";
+    boolean wait = true;
 
     /**
      * Called when the activity is first created.
@@ -43,32 +45,39 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
     }
 
     private void requestRecord(View view) {
-        String cl = className.getText().toString();
-        String em = email.getText().toString();
 
-        Boolean b = comm.sendDataToRaspberryPi(
-                "7&" + username + "&" + className.getText().toString()
-        );
-        if(!b) {
-            requestRecordText.setText("Data could not be sent");
-            return;
-        }
+        Thread networkThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String em = email.getText().toString();
+                    Boolean b = comm.sendDataToRaspberryPi(
+                            "7&" + username + "&" + className.getText().toString()
+                    );
+                    if(!b) {
+                        response = "Data could not be sent";
+                        wait = false;
+                        return;
+                    }
 
-        String[] split = comm.getDataFromRaspberryPi();
-        int code = Integer.parseInt(split[0]);
-        if(code > 99) { //100+ is an error
-            requestRecordText.setText(split[1]);
-            return;
-        }
-        requestRecordText.setText("Success!");
-
-        /*
-        TODO: SEND THIS STUFF TO THE PI
-            WHAT WE SEND:
-                STRING: USERNAME
-                STRING: CLASS NAME
-            WHAT WE GET: BOOLEAN SAYING IF IT WAS SUCCESSFUL
-        Here's what i'm thinking. Just ask them for an email address, and send them the .csv file
-         */
+                    String[] split = comm.getDataFromRaspberryPi();
+                    int code = Integer.parseInt(split[0]);
+                    if(code > 99) { //100+ is an error
+                        response = split[1];
+                        wait = false;
+                        return;
+                    }
+                    response = "Success!";
+                    wait = false;
+                } catch (Exception e) {
+                    e.printStackTrace();
+					response = "Networking errors; Unable to connect to server";
+                }
+            }
+        });
+        while(wait);
+        wait = true;
+        networkThread.start();
+        requestRecordText.setText(response);
     }
 }
