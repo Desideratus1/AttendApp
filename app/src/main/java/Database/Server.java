@@ -17,7 +17,7 @@ public class Server {
     DataOutputStream DOS;
     LoginsCSV logins;
 
-	String PATH = "C:\\Users\\Desideratus\\workspace\\tester\\src\\Database\\";
+	String PATH = System.getProperty("user.dir") + "//";
 	String LOGINS_EXTENTION = ".txt";
 	String ATTENDANCE_EXTENTION = ".txt";
     
@@ -40,7 +40,7 @@ public class Server {
 
     public Server() throws IOException {
         socketServer = new ServerSocket(1420);
-        logins = new LoginsCSV(PATH + "un");
+        logins = new LoginsCSV(PATH + "//un");
     }
 
     public void getNextRequest() throws IOException {
@@ -155,7 +155,7 @@ public class Server {
 				}
 
 				activePeriod = new attendancePeriodCSV(PATH + className + ATTENDANCE_EXTENTION, realTimeInSeconds);
-				if(activePeriod == null) {
+				if(activePeriod == null || !activePeriod.exists()) {
 					DOS.writeBytes("109&Class does not exist\n");
 					return;
 				}
