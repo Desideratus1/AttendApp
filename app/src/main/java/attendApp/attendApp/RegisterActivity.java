@@ -22,7 +22,6 @@ public class RegisterActivity extends AppCompatActivity {
     TextView registerFailed;
     RaspberryPiCommunication comm;
     boolean flag = false;
-    boolean wait = true;
     String response = "Unknown failure";
 
     /**
@@ -86,7 +85,6 @@ public class RegisterActivity extends AppCompatActivity {
                     Boolean b = comm.sendDataToRaspberryPi("1&" + username + "&" + password + "&" + fullName + "&" + isT);
                     if (!b) {
                         response = "Data could not be sent";
-                        wait = false;
                         return;
                     }
 
@@ -94,13 +92,11 @@ public class RegisterActivity extends AppCompatActivity {
                     int code = Integer.parseInt(split[0]);
                     if (code > 99) { //100+ is an error
                         response = split[1];
-                        wait = false;
                         return;
                     }
 
                     comm.end(); //Kill the link
                     flag = true;
-                    wait = false;
                 } catch (Exception e) {
                     e.printStackTrace();
                     response = "Networking errors; Unable to connect to server";
@@ -108,8 +104,11 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
         networkThread.start();
-        while(wait);
-        wait = true;
+		try {
+			networkThread.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
         if (flag) startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
         else registerFailed.setText(response);
     }

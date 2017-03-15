@@ -18,7 +18,6 @@ public class AdministratorNewClass extends AppCompatActivity {
 	RaspberryPiCommunication comm = new RaspberryPiCommunication();
 	String username;
 	String response = "Unknown failure";
-	boolean wait = true;
 
 	/**
 	 * Called when the activity is first created.
@@ -26,7 +25,7 @@ public class AdministratorNewClass extends AppCompatActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.admin_delete_class_layout);
+		setContentView(R.layout.admin_new_class_layout);
 
 		createClass = (Button) findViewById(R.id.createClass);
 		createClassText = (TextView) findViewById(R.id.delete_class_text);
@@ -54,22 +53,25 @@ public class AdministratorNewClass extends AppCompatActivity {
 					);
 					if(!b) {
 						response = "Data could not be sent";
-						wait = false;
 						return;
 					}
 
 					String[] split = comm.getDataFromRaspberryPi();
 					response = split[1];
-					wait = false;
 				} catch (Exception e) {
 					e.printStackTrace();
 					response = "Networking errors; Unable to connect to server";
 				}
 			}
 		});
-		while(wait);
-		wait = true;
 		networkThread.start();
+
+		try {
+			networkThread.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
 		createClassText.setText(response);
 	}
 }

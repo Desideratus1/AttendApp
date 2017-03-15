@@ -19,7 +19,6 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
     RaspberryPiCommunication comm = new RaspberryPiCommunication();
     String username;
     String response = "Unknown failure";
-    boolean wait = true;
 
     /**
      * Called when the activity is first created.
@@ -56,7 +55,6 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
                     );
                     if(!b) {
                         response = "Data could not be sent";
-                        wait = false;
                         return;
                     }
 
@@ -64,20 +62,23 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
                     int code = Integer.parseInt(split[0]);
                     if(code > 99) { //100+ is an error
                         response = split[1];
-                        wait = false;
                         return;
                     }
                     response = "Success!";
-                    wait = false;
                 } catch (Exception e) {
                     e.printStackTrace();
 					response = "Networking errors; Unable to connect to server";
                 }
             }
         });
-        while(wait);
-        wait = true;
         networkThread.start();
+
+        try {
+            networkThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         requestRecordText.setText(response);
     }
 }

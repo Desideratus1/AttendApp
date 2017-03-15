@@ -18,8 +18,6 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
     RaspberryPiCommunication comm = new RaspberryPiCommunication();
     String username;
     String response = "Unknown error";
-    boolean wait = true;
-
     /**
      * Called when the activity is first created.
      */
@@ -61,14 +59,11 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    while(wait);
-                    wait = true;
                     int timeInSeconds;
                     try {
                         timeInSeconds = Integer.parseInt(timeField.getText().toString())*60;
                     } catch(Exception e) {
                         response = "The minutes you supplied is unusable.";
-                        wait = false;
                         return;
                     }
 
@@ -77,7 +72,6 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
                     );
                     if(!b) {
                         response = "Data could not be sent";
-                        wait = false;
                         return;
                     }
 
@@ -85,20 +79,24 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
                     int code = Integer.parseInt(split[0]);
                     if(code > 99) { //100+ is an error
                         response = split[1];
-                        wait = false;
                         return;
                     }
 
                     attendanceText.setText("Success!");
-                    wait = false;
                 } catch (Exception e) {
                     e.printStackTrace();
 					response = "Networking errors; Unable to connect to server";
                 }
             }
         });
-        while(wait);
         networkThread.start();
+
+        try {
+            networkThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         attendanceText.setText(response);
     }
 
@@ -112,14 +110,11 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    while(wait);
-                    wait = true;
                     Boolean b = comm.sendDataToRaspberryPi(
                             "4&" + username
                     );
                     if(!b) {
                         response = "Data could not be sent";
-                        wait = false;
                         return;
                     }
 
@@ -127,18 +122,22 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
                     int code = Integer.parseInt(split[0]);
                     if(code > 99) { //100+ is an error
                         response = split[1];
-                        wait = false;
                         return;
                     }
                     response = "Success!";
-                    wait = false;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
-        while(wait);
         networkThread.start();
+
+		try {
+			networkThread.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
         attendanceText.setText(response);
     }
 

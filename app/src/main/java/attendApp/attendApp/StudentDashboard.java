@@ -27,7 +27,6 @@ public class StudentDashboard extends AppCompatActivity {
     String username;
     String response = "Unknown failure";
     boolean success = false;
-    boolean wait = true;
 
     /**
      * Called when the activity is first created.
@@ -104,7 +103,6 @@ public class StudentDashboard extends AppCompatActivity {
                     Boolean b = comm.sendDataToRaspberryPi("2&" + username);
                     if(!b) {
                         response = "Data could not be sent";
-                        wait = false;
                         return;
                     }
 
@@ -112,11 +110,9 @@ public class StudentDashboard extends AppCompatActivity {
                     int code = Integer.parseInt(split[0]);
                     if(code > 99) { //100+ is an error
                         response = split[1];
-                        wait = false;
                         return;
                     }
                     success = true;
-                    wait = false;
                     return;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -124,9 +120,14 @@ public class StudentDashboard extends AppCompatActivity {
                 }
             }
         });
-        while(wait);
-        wait = true;
         networkThread.start();
+
+        try {
+            networkThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         attendanceResponse.setText(response);
     }
 }

@@ -19,7 +19,6 @@ public class LoginActivity extends AppCompatActivity {
     String[] split = {"0","Critical failure"};
     byte c = 2;
     String response;
-    boolean wait = true;
 
 
     /**
@@ -50,7 +49,6 @@ public class LoginActivity extends AppCompatActivity {
                         Intent n = new Intent(LoginActivity.this, RegisterActivity.class);
                         n.putExtra("USERNAME", usernameField.getText().toString());
                         n.putExtra("PASSWORD", passwordField.getText().toString());
-                        //socket.close();
                         startActivity(n);
                     }
                 });
@@ -73,14 +71,12 @@ public class LoginActivity extends AppCompatActivity {
                     Boolean b = comm.sendDataToRaspberryPi("0&" + username + "&" + password);
                     if(!b) {
                         loginFailed.setText("Data could not be sent");
-                        wait = false;
                         return;
                     }
                     split = comm.getDataFromRaspberryPi();
                     int code = Integer.parseInt(split[0]);
                     response = split[1];
                     c = (byte) code;
-                    wait = false;
                 } catch (Exception e) {
                     e.printStackTrace();
                     response = "Networking errors; Unable to connect to server";
@@ -88,12 +84,15 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
         networkThread.start();
-    }
+		try {
+			networkThread.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 
     private void login(View view) {
         usernameAndPasswordMatch(view);
-        while (wait);
-        wait = true;
         loginFailed.setText(Integer.toString(c));
         switch (c) {
             case 0:
