@@ -104,4 +104,8 @@ public class attendancePeriodCSV {
 	boolean isFinished() {
 		return (endTime <= (new Date().getTime())/1000);
 	}
+
+	public boolean exists() {
+		return file.exists();
+	}
 }
