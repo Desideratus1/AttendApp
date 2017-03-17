@@ -1,7 +1,6 @@
 package Database;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -25,8 +24,8 @@ public class Server {
     String pathToFolder;
     String currentActiveAttendancePeriodClassName;
     attendancePeriodCSV activePeriod;
-    double lat = 0;
-    double lon = 0;
+    static double lat = 0;
+    static double lon = 0;
     
     String command = "python " + PATH + "Database\\Database\\gpsCoord.py";
     /*
@@ -44,10 +43,11 @@ public class Server {
     */
 
     public Server() throws IOException, InterruptedException {
+    	System.out.println(PATH);
         socketServer = new ServerSocket(1420);
         logins = new LoginsCSV(PATH + "//un");
-        Process p = Runtime.getRuntime().exec(command);
-        p.waitFor();
+        //Process p = Runtime.getRuntime().exec(command);
+        //p.waitFor();
 
         Scanner scanner = new Scanner(new File("gps.txt"));
         lat = Double.parseDouble(scanner.nextLine());
@@ -57,14 +57,28 @@ public class Server {
 
     public void getNextRequest() throws IOException {
         Socket clientSocket = socketServer.accept(); //This is blocking. It will wait.
-        DOS = new DataOutputStream(clientSocket.getOutputStream());
-        DIS = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        String read = DIS.readLine();
-        System.out.println(read + "--");
-        serveRequest(read);
+        Thread thr = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				try {
+					DOS = new DataOutputStream(clientSocket.getOutputStream());
+					DIS = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+			        String read = DIS.readLine();
+			        System.out.println(read + "--");
+			        serveRequest(read);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+        });
+        thr.start();
     }
 
     private void serveRequest(String in) throws IOException {
+    	if(in == null) return;
 		checkAttendancePeriod();
         String[] split = in.split("&");
         int code;
@@ -122,6 +136,7 @@ public class Server {
                 break;
             case 2: //Student submit attendance
                 if (split.length != 4) {
+                	System.out.println("Here");
                     DOS.writeBytes("102&Bad request\n");
                     return;
                 }
@@ -132,19 +147,25 @@ public class Server {
                 user = logins.getUser(username);
                 if(user == null) {
                 	DOS.writeBytes("104&Error retrieving account\n");
-                	return;
-                }
-                
-                if(currentActiveAttendancePeriodClassName == null) {
-                	DOS.writeBytes("105& No active attendance period\n");
+                	System.out.println("Here1");
                 	return;
                 }
                 
                 if(tooFarAway(Double.parseDouble(lat), Double.parseDouble(lon))) {
                 	DOS.writeBytes("110&You are too far away! Get closer!");
+                	System.out.println("Here2");
                 	return;
                 }
+                
+                if(currentActiveAttendancePeriodClassName == null) {
+                	DOS.writeBytes("105& No active attendance period\n");
+                	System.out.println("Here3");
+                	return;
+                }
+                
                 boolean b = activePeriod.submitAttendance(user.getName());
+                if(b) System.out.println("Here4");
+                else System.out.println("Here5");
                 if(b) DOS.writeBytes("0&Attendance recieved!\n");
                 else DOS.writeBytes("106&Student not found in class\n");
                 
@@ -258,18 +279,21 @@ public class Server {
         }
     }
 
-	private boolean tooFarAway(double lat2, double lon2) {
-		double theta = lon - lon2;
-		double dist = Math.sin(Math.toDegrees(lat)) * Math.sin(Math.toDegrees(lat2)) + Math.cos(Math.toDegrees(lat)) * Math.cos(Math.toDegrees(lat2)) * Math.cos(Math.toDegrees(theta));
-		dist = Math.acos(dist);
-		dist = Math.toRadians((dist));
-		dist = dist * 60 * 1.1515;
-		//Distance is now in terms of miles
-		//25 feet is 0.00473485 miles
-		
-		System.out.println(dist);
-		return ( dist > 0.00473485);
-	}
+	public static boolean tooFarAway(double lat2, double lon2) {
+		if(lat2 == lat && lon2 == lon) return true;
+	    double earthRadius = 6371000; //meters
+	    double dLat = Math.toRadians(lat2-lat);
+	    double dLng = Math.toRadians(lon2-lon);
+	    double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+	               Math.cos(Math.toRadians(lat)) * Math.cos(Math.toRadians(lat2)) *
+	               Math.sin(dLng/2) * Math.sin(dLng/2);
+	    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+	    float dist = (float) (earthRadius * c);
+
+	    System.out.println(dist);
+		System.out.println(dist > 5);
+		return (dist > 0.00473485);
+	    }
 
 	private void checkAttendancePeriod() {
 		if(activePeriod == null) return;
