@@ -1,5 +1,7 @@
 package attendApp.attendApp;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -37,6 +39,7 @@ import java.net.Socket;
 107: Teacher does not have access
 108: There is an active attendance period
 109: The class does not exist
+110: Error?
 
 200: Not working (new class)
 201: Not working (delete class)
@@ -44,8 +47,8 @@ import java.net.Socket;
  */
 
 public class RaspberryPiCommunication {
-    private String RASPBERRY_PI_IP = "";
-    private int RASPBERRY_PI_PORT = 0;
+    private String RASPBERRY_PI_IP = "10.0.0.12";
+    private int RASPBERRY_PI_PORT = 1420;
     private Socket socket;
     private DataOutputStream DOS;
     private BufferedReader DIS;
@@ -88,11 +91,14 @@ public class RaspberryPiCommunication {
      */
     String[] getDataFromRaspberryPi() {
         int tries = 0;
-        while(DIS == null && !reinitialize()) tries++;
-        if(tries == 20) return new String[] {"100","Failure to get Raspberry Pi"};
+		if(DIS == null) {
+			return new String[] {"101","Failure to read from Raspberry Pi"};
+		}
+		Log.d("1", "1");
 
         String toReturn;
         try {
+			Log.d("2", "2");
             toReturn = DIS.readLine();
         } catch (Exception e) {
             return new String[] {"101", "Failure to read from Raspberry Pi"};
@@ -117,7 +123,6 @@ public class RaspberryPiCommunication {
             DOS = new DataOutputStream(socket.getOutputStream());
             DIS = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch(Exception e) {
-            e.printStackTrace();
             socket = null;
             DOS = null;
             DIS = null;

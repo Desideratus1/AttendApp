@@ -15,7 +15,7 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
     Button beginAttendancePeriod;
     Button cancelAttendancePeriod;
     TextView attendanceText;
-    RaspberryPiCommunication comm = new RaspberryPiCommunication();
+    RaspberryPiCommunication comm;
     String username;
     String response = "Unknown error";
     /**
@@ -59,6 +59,7 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
             @Override
             public void run() {
                 try {
+                    comm = new RaspberryPiCommunication();
                     int timeInSeconds;
                     try {
                         timeInSeconds = Integer.parseInt(timeField.getText().toString())*60;
@@ -76,6 +77,7 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
                     }
 
                     String[] split = comm.getDataFromRaspberryPi();
+					comm.end();
                     int code = Integer.parseInt(split[0]);
                     if(code > 99) { //100+ is an error
                         response = split[1];

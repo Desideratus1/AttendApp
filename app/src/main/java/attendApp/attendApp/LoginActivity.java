@@ -70,16 +70,17 @@ public class LoginActivity extends AppCompatActivity {
 
                     Boolean b = comm.sendDataToRaspberryPi("0&" + username + "&" + password);
                     if(!b) {
-                        loginFailed.setText("Data could not be sent");
+                        response = "Data could not be sent";
                         return;
                     }
                     split = comm.getDataFromRaspberryPi();
+                    comm.end();
                     int code = Integer.parseInt(split[0]);
                     response = split[1];
                     c = (byte) code;
                 } catch (Exception e) {
-                    e.printStackTrace();
                     response = "Networking errors; Unable to connect to server";
+                    return;
                 }
             }
         });
@@ -93,7 +94,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void login(View view) {
         usernameAndPasswordMatch(view);
-        loginFailed.setText(Integer.toString(c));
+        loginFailed.setText(response);
         switch (c) {
             case 0:
                 Intent n = new Intent(LoginActivity.this, StudentDashboard.class);

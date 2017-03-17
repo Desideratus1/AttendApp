@@ -16,7 +16,7 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
     TextView requestRecordText;
     EditText className;
     EditText email;
-    RaspberryPiCommunication comm = new RaspberryPiCommunication();
+    RaspberryPiCommunication comm;
     String username;
     String response = "Unknown failure";
 
@@ -49,6 +49,7 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
             @Override
             public void run() {
                 try {
+                    comm = new RaspberryPiCommunication();
                     String em = email.getText().toString();
                     Boolean b = comm.sendDataToRaspberryPi(
                             "7&" + username + "&" + className.getText().toString()
@@ -59,6 +60,7 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
                     }
 
                     String[] split = comm.getDataFromRaspberryPi();
+                    comm.end();
                     int code = Integer.parseInt(split[0]);
                     if(code > 99) { //100+ is an error
                         response = split[1];

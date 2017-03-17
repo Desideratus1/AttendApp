@@ -16,19 +16,10 @@
     <TextView
         android:layout_width="200dp"
         android:layout_height="50dp"
-        android:text="@string/attendance_denied"
-        android:layout_below="@+id/submit_attendance"
-        android:layout_alignStart="@+id/submit_attendance"
-        android:layout_marginTop="56dp"
-        android:id="@+id/attendance_fail" />
-
-    <TextView
-        android:layout_width="200dp"
-        android:layout_height="50dp"
-        android:text="@string/attendance_recieved"
         android:id="@+id/attendance_success"
-        android:layout_alignBaseline="@+id/attendance_fail"
-        android:layout_alignBottom="@+id/attendance_fail"
-        android:layout_alignStart="@+id/attendance_fail" />
+        android:layout_below="@+id/submit_attendance"
+        android:layout_alignLeft="@+id/submit_attendance"
+        android:layout_alignStart="@+id/submit_attendance"
+        android:layout_marginTop="58dp"/>
 
 </RelativeLayout>

@@ -15,7 +15,7 @@ public class AdministratorDeleteClass extends AppCompatActivity {
     Button deleteClass;
     TextView deleteClassText;
     EditText className;
-    RaspberryPiCommunication comm = new RaspberryPiCommunication();
+    RaspberryPiCommunication comm;
     String username;
     String response = "Unknown failure";
 
@@ -57,6 +57,7 @@ public class AdministratorDeleteClass extends AppCompatActivity {
                     }
 
                     String[] response = comm.getDataFromRaspberryPi();
+                    comm.end();
                     deleteClassText.setText(response[1]);
                 } catch (Exception e) {
                     e.printStackTrace();

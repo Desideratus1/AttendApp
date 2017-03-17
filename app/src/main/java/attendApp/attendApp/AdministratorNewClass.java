@@ -15,7 +15,7 @@ public class AdministratorNewClass extends AppCompatActivity {
 	Button createClass;
 	TextView createClassText;
 	EditText className;
-	RaspberryPiCommunication comm = new RaspberryPiCommunication();
+	RaspberryPiCommunication comm;
 	String username;
 	String response = "Unknown failure";
 
@@ -48,6 +48,7 @@ public class AdministratorNewClass extends AppCompatActivity {
 			@Override
 			public void run() {
 				try {
+					comm = new RaspberryPiCommunication();
 					Boolean b = comm.sendDataToRaspberryPi(
 							"5&" + username + "&" + className.getText().toString()
 					);
@@ -57,6 +58,7 @@ public class AdministratorNewClass extends AppCompatActivity {
 					}
 
 					String[] split = comm.getDataFromRaspberryPi();
+					comm.end();
 					response = split[1];
 				} catch (Exception e) {
 					e.printStackTrace();
