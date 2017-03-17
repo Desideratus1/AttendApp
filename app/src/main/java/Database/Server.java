@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Server {
 
@@ -17,13 +18,17 @@ public class Server {
     DataOutputStream DOS;
     LoginsCSV logins;
 
-	String PATH = System.getProperty("user.dir") + "//";
+	String PATH = System.getProperty("user.dir") + "\\";
 	String LOGINS_EXTENTION = ".txt";
 	String ATTENDANCE_EXTENTION = ".txt";
     
     String pathToFolder;
     String currentActiveAttendancePeriodClassName;
     attendancePeriodCSV activePeriod;
+    double lat = 0;
+    double lon = 0;
+    
+    String command = "python " + PATH + "Database\\Database\\gpsCoord.py";
     /*
     public static void main(String[] args) throws IOException {
         ServerSocket socketServer = new ServerSocket(1420);
@@ -38,9 +43,16 @@ public class Server {
     }
     */
 
-    public Server() throws IOException {
+    public Server() throws IOException, InterruptedException {
         socketServer = new ServerSocket(1420);
         logins = new LoginsCSV(PATH + "//un");
+        Process p = Runtime.getRuntime().exec(command);
+        p.waitFor();
+
+        Scanner scanner = new Scanner(new File("gps.txt"));
+        lat = Double.parseDouble(scanner.nextLine());
+        lon = Double.parseDouble(scanner.nextLine());
+        scanner.close();
     }
 
     public void getNextRequest() throws IOException {
@@ -109,11 +121,13 @@ public class Server {
                 DOS.writeBytes("0&Success!\n");
                 break;
             case 2: //Student submit attendance
-                if (split.length != 2) {
+                if (split.length != 4) {
                     DOS.writeBytes("102&Bad request\n");
                     return;
                 }
                 username = split[1];
+                String lat = split[2];
+                String lon = split[3];
                 
                 user = logins.getUser(username);
                 if(user == null) {
@@ -124,11 +138,15 @@ public class Server {
                 if(currentActiveAttendancePeriodClassName == null) {
                 	DOS.writeBytes("105& No active attendance period\n");
                 	return;
-                } else {
-                	boolean b = activePeriod.submitAttendance(user.getName());
-                	if(b) DOS.writeBytes("0&Attendance recieved!\n");
-                	else DOS.writeBytes("106&Student not found in class\n");
                 }
+                
+                if(tooFarAway(Double.parseDouble(lat), Double.parseDouble(lon))) {
+                	DOS.writeBytes("110&You are too far away! Get closer!");
+                	return;
+                }
+                boolean b = activePeriod.submitAttendance(user.getName());
+                if(b) DOS.writeBytes("0&Attendance recieved!\n");
+                else DOS.writeBytes("106&Student not found in class\n");
                 
                 break;
             case 3: //Begin attendance period
@@ -239,6 +257,19 @@ public class Server {
 
         }
     }
+
+	private boolean tooFarAway(double lat2, double lon2) {
+		double theta = lon - lon2;
+		double dist = Math.sin(Math.toDegrees(lat)) * Math.sin(Math.toDegrees(lat2)) + Math.cos(Math.toDegrees(lat)) * Math.cos(Math.toDegrees(lat2)) * Math.cos(Math.toDegrees(theta));
+		dist = Math.acos(dist);
+		dist = Math.toRadians((dist));
+		dist = dist * 60 * 1.1515;
+		//Distance is now in terms of miles
+		//25 feet is 0.00473485 miles
+		
+		System.out.println(dist);
+		return ( dist > 0.00473485);
+	}
 
 	private void checkAttendancePeriod() {
 		if(activePeriod == null) return;

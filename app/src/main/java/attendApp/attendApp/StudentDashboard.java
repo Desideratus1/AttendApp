@@ -91,6 +91,7 @@ public class StudentDashboard extends AppCompatActivity {
             case 10:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                     submitAttendance();
+                else attendanceResponse.setText("Sorry, you haven't set GPS permissions.")
         }
     }
 
@@ -100,7 +101,7 @@ public class StudentDashboard extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    Boolean b = comm.sendDataToRaspberryPi("2&" + username);
+                    Boolean b = comm.sendDataToRaspberryPi("2&" + username + "&" + loc.getLatitude + "&" + loc.getLongitude);
                     if(!b) {
                         response = "Data could not be sent";
                         return;
