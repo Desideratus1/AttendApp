@@ -3,11 +3,14 @@ package Database;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class Server {
 
@@ -21,26 +24,12 @@ public class Server {
 	String LOGINS_EXTENTION = ".txt";
 	String ATTENDANCE_EXTENTION = ".txt";
     
-    String pathToFolder;
-    String currentActiveAttendancePeriodClassName;
-    attendancePeriodCSV activePeriod;
+    String currentActiveAttendancePeriodClassName = null;
+    attendancePeriodCSV activePeriod = null;
     static double lat = 0;
     static double lon = 0;
     
-    String command = "python " + PATH + "Database\\Database\\gpsCoord.py";
-    /*
-    public static void main(String[] args) throws IOException {
-        ServerSocket socketServer = new ServerSocket(1420);
-        Socket clientSocket = socketServer.accept();       //This is blocking. It will wait.
-        DataInputStream DIS = new DataInputStream(clientSocket.getInputStream());
-        DataOutputStream DOS = new DataOutputStream(clientSocket.getOutputStream());
-        while(true){
-            clientSocket = socketServer.accept();
-            String input = DIS.readUTF();
-            serveRequest(input);
-        }
-    }
-    */
+    String command = "python " + PATH + "gpsCoord.py";
 
     public Server() throws IOException, InterruptedException {
     	System.out.println(PATH);
@@ -56,7 +45,7 @@ public class Server {
     }
 
     public void getNextRequest() throws IOException {
-        final Socket clientSocket = socketServer.accept(); //This is blocking. It will wait.
+        Socket clientSocket = socketServer.accept(); //This is blocking. It will wait.
         Thread thr = new Thread(new Runnable() {
 			
 			@Override
@@ -136,7 +125,6 @@ public class Server {
                 break;
             case 2: //Student submit attendance
                 if (split.length != 4) {
-                	System.out.println("Here");
                     DOS.writeBytes("102&Bad request\n");
                     return;
                 }
@@ -147,30 +135,30 @@ public class Server {
                 user = logins.getUser(username);
                 if(user == null) {
                 	DOS.writeBytes("104&Error retrieving account\n");
-                	System.out.println("Here1");
                 	return;
                 }
                 
                 if(tooFarAway(Double.parseDouble(lat), Double.parseDouble(lon))) {
-                	DOS.writeBytes("110&You are too far away! Get closer!");
-                	System.out.println("Here2");
+                	DOS.writeBytes("110&You are too far away! Get closer!\n");
                 	return;
                 }
                 
                 if(currentActiveAttendancePeriodClassName == null) {
                 	DOS.writeBytes("105& No active attendance period\n");
-                	System.out.println("Here3");
                 	return;
                 }
                 
                 boolean b = activePeriod.submitAttendance(user.getName());
-                if(b) System.out.println("Here4");
-                else System.out.println("Here5");
                 if(b) DOS.writeBytes("0&Attendance recieved!\n");
                 else DOS.writeBytes("106&Student not found in class\n");
                 
                 break;
             case 3: //Begin attendance period
+            	if(activePeriod != null) {
+            		DOS.writeBytes("108&Active attendance period!\n");
+            		return;
+            	}
+            	
                 if (split.length != 4) {
                     DOS.writeBytes("102&Bad request\n");
                     return;
@@ -179,7 +167,7 @@ public class Server {
                 String timeAsStr = split[2];
                 String className = split[3];
                 int realTimeInSeconds;
-
+                
                 try {
                     realTimeInSeconds = Integer.parseInt(timeAsStr);
                 } catch(Exception e) {
@@ -193,14 +181,18 @@ public class Server {
 					return;
 				}
 
-				activePeriod = new attendancePeriodCSV(PATH + className + ATTENDANCE_EXTENTION, realTimeInSeconds);
+				System.out.println("1");
+				activePeriod = new attendancePeriodCSV(PATH + "records_for_" + className + ATTENDANCE_EXTENTION, realTimeInSeconds);
 				if(activePeriod == null || !activePeriod.exists()) {
+					activePeriod = null;
 					DOS.writeBytes("109&Class does not exist\n");
 					return;
 				}
+				currentActiveAttendancePeriodClassName = className;
 				activePeriod.beginAttendancePeriod();
+				DOS.writeBytes("0&Success!\n");
 
-                    break;
+                break;
             case 4: //Cancel attendance
                 if (split.length != 2) {
                     DOS.writeBytes("102&Bad request\n");
@@ -230,9 +222,47 @@ public class Server {
                 
                 break;
             case 5: //Create new class AHAHHHHHHHHHHHHHHHHHHHHHHHHH
-                DOS.writeBytes("200&Create new class bad\n");
+            	if (split.length != 3) {
+                    DOS.writeBytes("102&Bad request\n");
+                    return;
+                }
+            	username = split[1];
+            	className = split[2];
+            	
+            	user = logins.getUser(username);
+                
+                if(user == null) {
+                	DOS.writeBytes("104&Error retrieving account\n");
+                	return;
+                }
+                
+                File newClass = new File("records_for_" + className + ATTENDANCE_EXTENTION);
+                if(newClass.exists()) {
+             	   DOS.writeBytes("111&This file exists, we can not make a new class out of it. Delete this class first\n");
+             	   return;
+                }
+                
+               ArrayList<String> f = extractDataForNewClass(PATH + className + ".txt");
+               if(f == null) {
+            	   DOS.writeBytes("112&File does not exist\n");
+            	   return;
+               }
+               newClass.createNewFile();
+
+               FileWriter writer = new FileWriter(newClass);
+               StringBuilder toWrite = new StringBuilder("Date,");
+               for(String str : f) {
+            	   toWrite.append(str +  ",");
+   			   }
+               toWrite.deleteCharAt(toWrite.length()-1);
+               writer.write(toWrite.toString());
+               writer.close();
+               
+               user.addClass(className);
+               logins.write();
+               DOS.writeUTF("0&Success!\n");
                 break;
-            case 6:
+            case 6: //Delete class request
                 if (split.length != 3) {
                     DOS.writeBytes("102&Bad request\n");
                     return;
@@ -252,7 +282,7 @@ public class Server {
 				}
 
 				if(user.hasAccessToClass(className)) {
-					File file = new File(PATH + className + ATTENDANCE_EXTENTION);
+					File file = new File(PATH + "records_for_" + className + ATTENDANCE_EXTENTION);
 					if(file.exists()) {
 						file.delete();
 						DOS.writeBytes("0&Success!\n");
@@ -298,9 +328,27 @@ public class Server {
 	private void checkAttendancePeriod() {
 		if(activePeriod == null) return;
 		else try {
-			activePeriod.endAttendancePeriod();
+			if(activePeriod.endAttendancePeriod()) {
+				currentActiveAttendancePeriodClassName = null;
+				return;
+			}
 		} catch (IOException e) {
 			return;
 		}
+	}
+	
+	private ArrayList<String> extractDataForNewClass(String fileName) {
+		
+		 File fil = new File(fileName);
+         ArrayList<String> names = new ArrayList<String>();
+         Scanner scan;
+		try {
+			scan = new Scanner(fil);
+		} catch (FileNotFoundException e) {
+			return null;
+		}
+         while(scan.hasNextLine()) names.add(scan.nextLine());
+         scan.close();
+         return names;
 	}
 }

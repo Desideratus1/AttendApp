@@ -53,13 +53,14 @@ public class attendancePeriodCSV {
 		period[0] = Integer.toString((data.size()));
 	}
 	
-	void endAttendancePeriod() throws IOException {
-		if(!isFinished()) return;
+	boolean endAttendancePeriod() throws IOException {
+		if(!isFinished()) return false;
 
 		data.add(period);
 		FileWriter writer = new FileWriter(file);
 		writer.write(toString());
 		writer.close();
+		return true;
 	}
 	
 	void cancelAttendancePeriod() throws IOException {
@@ -93,7 +94,7 @@ public class attendancePeriodCSV {
 		
 		for(String[] list : data) {
 			for(String str : list) {
-				toReturn.append(str +  ",");
+				toReturn.append(str.replaceAll(" +", " ").trim() +  ",");
 			}
 			toReturn.deleteCharAt(toReturn.length()-1);
 			toReturn.append("\n");
