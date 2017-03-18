@@ -3,29 +3,43 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:text="Place your file into the folder that the University has labeled, specify the class name EXACTLY (Minus the extention), and press the button to create the class."
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="79dp"
+        android:id="@+id/textView"
+        android:layout_below="@+id/create_class"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/create_class"
-        android:id="@+id/beginAttendancePeriod"
-        android:layout_below="@+id/timeField"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="42dp"
-        android:onClick="AdministratorNewClass.createClass"/>
-
-    <EditText android:id="@+id/studentList"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:hint="Replace me"
-        android:layout_marginTop="104dp"
+        android:id="@+id/create_class"
+        android:layout_marginTop="151dp"
         android:layout_alignParentTop="true"
-        android:layout_alignLeft="@+id/timeField"
-        android:layout_alignStart="@+id/timeField" />
+        android:layout_centerHorizontal="true"
+        android:onClick="createClass"/>
 
     <TextView
-        android:id="@+id/newClassText"
+        android:id="@+id/new_class_text"
         android:layout_width="200dp"
         android:layout_height="50dp"
-        android:layout_below="@+id/studentList"/>
+        android:layout_below="@+id/create_class"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:layout_alignBottom="@+id/create_class"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="67dp"
+        android:id="@+id/new_class"
+        android:hint="Class @string/class_name"/>
 
 </RelativeLayout>

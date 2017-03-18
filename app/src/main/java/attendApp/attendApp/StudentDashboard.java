@@ -30,7 +30,7 @@ public class StudentDashboard extends AppCompatActivity {
     TextView attendanceResponse;
     String username;
     String response = "Unknown failure";
-    boolean success = false;
+    boolean success;
 	RaspberryPiCommunication comm;
 	URL url;
 
@@ -49,11 +49,7 @@ public class StudentDashboard extends AppCompatActivity {
                 new View.OnClickListener() {
                     public void onClick(View view) {
                         submitAttendance();
-                        if(success) {
-                            attendanceResponse.setText("Attendance Recieved");
-                        } else {
-							attendanceResponse.setText("Sorry, you haven't set GPS permissions.");
-						}
+                        if(success) attendanceResponse.setText("Attendance Recieved");
                     }
                 });
     }
@@ -66,6 +62,7 @@ public class StudentDashboard extends AppCompatActivity {
 				double lat = 0;
 				double lon = 0;
 				try {
+					success = false;
 					comm = new RaspberryPiCommunication();
 					url = new URL("http://freegeoip.net/json");
 					Scanner scanner = new Scanner(url.openStream());
@@ -88,6 +85,7 @@ public class StudentDashboard extends AppCompatActivity {
 					if(lat == 0 || lon == 0) throw new Exception("Failure");
 				} catch (Exception e) {
 					response = "Something has failed with the GPS. There is nothing we can do.";
+					success = false;
 					return;
 				}
                 try {
@@ -95,22 +93,19 @@ public class StudentDashboard extends AppCompatActivity {
 					comm.end();
                     if(!b) {
                         response = "Data could not be sent";
+						success = false;
                         return;
                     }
 
                     String[] split = comm.getDataFromRaspberryPi();
-					Log.d("We have reached thd1111", "Why are we frozen?");
 
                     int code = Integer.parseInt(split[0]);
-                    if(code > 99) { //100+ is an error
-                        response = split[1];
-						Log.d("We have reached the end", "Why are we frozen?");
-                    }
-                    success = true;
+					response = split[1];
+                    success = (code < 99);
                     return;
                 } catch (Exception e) {
-                    e.printStackTrace();
 					response = "Networking errors; Unable to connect to server";
+					success = false;
                 }
             }
         });
@@ -121,6 +116,7 @@ public class StudentDashboard extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+		attendanceResponse.setText(response);
     }
 }
 

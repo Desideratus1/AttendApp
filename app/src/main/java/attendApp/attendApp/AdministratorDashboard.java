@@ -75,7 +75,7 @@ public class AdministratorDashboard extends AppCompatActivity {
     }
 
     private void deleteClass(View view) {
-        Intent k = new Intent(AdministratorDashboard.this, AdministratorNewClass.class);
+        Intent k = new Intent(AdministratorDashboard.this, AdministratorDeleteClass.class);
         k.putExtra("USERNAME", username);
         k.putExtra("PASSWORD", password);
         startActivity(k);

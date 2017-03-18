@@ -15,9 +15,9 @@ public class AdministratorNewClass extends AppCompatActivity {
 	Button createClass;
 	TextView createClassText;
 	EditText className;
-	RaspberryPiCommunication comm;
 	String username;
 	String response = "Unknown failure";
+	RaspberryPiCommunication comm = new RaspberryPiCommunication();
 
 	/**
 	 * Called when the activity is first created.
@@ -27,14 +27,12 @@ public class AdministratorNewClass extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.admin_new_class_layout);
 
-		createClass = (Button) findViewById(R.id.createClass);
-		createClassText = (TextView) findViewById(R.id.delete_class_text);
-		className = (EditText) findViewById(R.id.class_name);
+		createClass = (Button) findViewById(R.id.create_class);
+		createClassText = (TextView) findViewById(R.id.new_class_text);
+		className = (EditText) findViewById(R.id.new_class);
 		username = getIntent().getStringExtra("USERNAME");
 
-		createClassText.setVisibility(View.INVISIBLE);
-
-		createClassText.setOnClickListener(
+		createClass.setOnClickListener(
 				new View.OnClickListener() {
 					public void onClick(View view) {
 						createClass(view);

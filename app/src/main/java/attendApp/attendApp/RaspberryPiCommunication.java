@@ -1,9 +1,6 @@
 package attendApp.attendApp;
 
-import android.util.Log;
-
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -40,6 +37,7 @@ import java.net.Socket;
 108: There is an active attendance period
 109: The class does not exist
 110: Error?
+111: Class DOES exist
 
 200: Not working (new class)
 201: Not working (delete class)
@@ -90,15 +88,12 @@ public class RaspberryPiCommunication {
      * @return An array of Strings with 2 pieces. The first piece is the "code" (0-255), and a string attached to say what the code means
      */
     String[] getDataFromRaspberryPi() {
-        int tries = 0;
 		if(DIS == null) {
 			return new String[] {"101","Failure to read from Raspberry Pi"};
 		}
-		Log.d("1", "1");
 
         String toReturn;
         try {
-			Log.d("2", "2");
             toReturn = DIS.readLine();
         } catch (Exception e) {
             return new String[] {"101", "Failure to read from Raspberry Pi"};

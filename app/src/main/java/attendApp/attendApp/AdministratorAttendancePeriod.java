@@ -84,7 +84,7 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
                         return;
                     }
 
-                    attendanceText.setText("Success!");
+                    response = "Success!";
                 } catch (Exception e) {
                     e.printStackTrace();
 					response = "Networking errors; Unable to connect to server";
