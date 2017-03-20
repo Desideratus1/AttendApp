@@ -84,7 +84,7 @@ public class attendancePeriodCSV {
 	}
 	
 	public String toString() {
-		StringBuilder toReturn = new StringBuilder();
+		StringBuilder toReturn = new StringBuilder("Date,");
 		
 		for(String str : heds) {
 			toReturn.append(str + ",");
@@ -100,6 +100,8 @@ public class attendancePeriodCSV {
 			toReturn.append("\n");
 		}
 		return toReturn.toString();
+		//Date,Name1,Name2,Name3,...Name?\n (\n means new line, there is no ',' after the final entry in that line
+		//1,(0 or 1),(0 or 1),(0 or 1)...\n (Again, \n is a new line. There is no new line after the final entry in the file
 	}
 
 	boolean isFinished() {

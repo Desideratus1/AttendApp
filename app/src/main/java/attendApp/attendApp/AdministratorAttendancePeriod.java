@@ -78,13 +78,8 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
 
                     String[] split = comm.getDataFromRaspberryPi();
 					comm.end();
-                    int code = Integer.parseInt(split[0]);
-                    if(code > 99) { //100+ is an error
-                        response = split[1];
-                        return;
-                    }
-
-                    response = "Success!";
+                    response = split[1];
+                    return;
                 } catch (Exception e) {
                     e.printStackTrace();
 					response = "Networking errors; Unable to connect to server";

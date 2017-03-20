@@ -21,7 +21,7 @@ public class Server {
     LoginsCSV logins;
 
 	String PATH = System.getProperty("user.dir") + "\\";
-	String LOGINS_EXTENTION = ".txt";
+	String PATH_FOR_ATTENDANCE_RECORDS = PATH + "records_for_";
 	String ATTENDANCE_EXTENTION = ".txt";
     
     String currentActiveAttendancePeriodClassName = null;
@@ -182,7 +182,7 @@ public class Server {
 				}
 
 				System.out.println("1");
-				activePeriod = new attendancePeriodCSV(PATH + "records_for_" + className + ATTENDANCE_EXTENTION, realTimeInSeconds);
+				activePeriod = new attendancePeriodCSV(PATH_FOR_ATTENDANCE_RECORDS + className + ATTENDANCE_EXTENTION, realTimeInSeconds);
 				if(activePeriod == null || !activePeriod.exists()) {
 					activePeriod = null;
 					DOS.writeBytes("109&Class does not exist\n");
@@ -282,7 +282,7 @@ public class Server {
 				}
 
 				if(user.hasAccessToClass(className)) {
-					File file = new File(PATH + "records_for_" + className + ATTENDANCE_EXTENTION);
+					File file = new File(PATH_FOR_ATTENDANCE_RECORDS + className + ATTENDANCE_EXTENTION);
 					if(file.exists()) {
 						file.delete();
 						DOS.writeBytes("0&Success!\n");
@@ -299,11 +299,34 @@ public class Server {
                     DOS.writeBytes("102&Bad request\n");
                     return;
                 }
+
                 username = split[1];
                 className = split[2];
-                
-                String reponse = activePeriod.toString();
-                DOS.writeBytes("202&Get record bad\n");
+
+
+				if(currentActiveAttendancePeriodClassName != null && className.equals(currentActiveAttendancePeriodClassName)) {
+					DOS.writeBytes("108&The class you want is currently active!\n");
+					return;
+				}
+
+				user = logins.getUser(username);
+				if(user == null) {
+					DOS.writeBytes("104&Failure to retrieve account\n");
+					return;
+				}
+
+				if(!user.hasAccessToClass(className)) {
+					DOS.writeBytes("107&You don't have access to this class!\n");
+					return;
+				}
+
+				attendancePeriodCSV classDat = new attendancePeriodCSV(PATH_FOR_ATTENDANCE_RECORDS + className,100);
+				if(!classDat.exists()) {
+					DOS.writeBytes("109&The class doesn't exist!\n");
+				}
+
+                String response = classDat.toString();
+                DOS.writeBytes("3&" + response.replaceAll("\n","|")+ "\n");
                 break;
 
         }

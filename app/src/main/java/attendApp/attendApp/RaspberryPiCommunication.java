@@ -25,6 +25,7 @@ import java.net.Socket;
 0: General Success
 1: The user is a Student
 2: The user is a Teacher
+3: Response to an administrator requesting an attendance record
 /*ERROR CODE LISTING: 100-???
 100: Failure to get a connection with the Raspberry Pi
 101: Failure to read from Raspberry Pi
@@ -42,6 +43,16 @@ import java.net.Socket;
 200: Not working (new class)
 201: Not working (delete class)
 202: Not working (Get record)
+
+Attendance records are read as, for example:
+Date,Name1,Name2,Name3,Name4,Name5,Name6
+1,1,1,1,1,1,1| <-- Note here that '|' replaces '\n' for the reason that the function to write to in our protocol means we are done writing.
+2,1,1,1,1,1,1|     This can be replaced with another symbol but it is not advised.
+3,1,1,1,1,1,1|
+4,1,1,1,1,1,1
+--
+NOTE: There is no '--' in attendance records to be clear. There are no trailing ',' marks after the last entry on a line.
+There are no new lines after the last entry in the file
  */
 
 public class RaspberryPiCommunication {
