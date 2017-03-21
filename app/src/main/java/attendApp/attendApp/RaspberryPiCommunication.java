@@ -10,7 +10,19 @@ import java.net.Socket;
  * Created by drpac on 3/3/2017.
  */
 
-/*MESSAGE LISTING
+/*General Protocol
+1. The App sends data in the format "data&data&data...\n"
+    The \n is a new line indicator and MUST BE AT THE END OF THE LINE. THIS CLASS HANDLES THIS ON THE APP'S SIDE
+    & - which is ampersand if you can't read it - separates different datum
+    So an example of this is: "0&username&password" - so it's a login request with 'password' and 'username' as data
+2. The Server will process the request and send back a response in the format "code&responseCode"
+	code is an integer that is listed below in RESPONSE CODE LISTING (and ERRORS)
+	Response is just a string response we display on the App
+	NOTE: This is different for Message 7, getting an attendance period record
+		The specifics are at the bottom of this comment chain.
+
+
+MESSAGE LISTING
 0: Login request                                    username password
 1: Register Request                                 username password name is_teacher
 2: Student Submit Attendance Request                username latitude longitude
@@ -46,13 +58,12 @@ import java.net.Socket;
 
 Attendance records are read as, for example:
 Date,Name1,Name2,Name3,Name4,Name5,Name6
-1,1,1,1,1,1,1| <-- Note here that '|' replaces '\n' for the reason that the function to write to in our protocol means we are done writing.
+1,1,1,1,1,1,1| <-- Note here that '|' replaces '\n' for the reason that '\n' tells the reciever that this is the end of the message.
 2,1,1,1,1,1,1|     This can be replaced with another symbol but it is not advised.
 3,1,1,1,1,1,1|
 4,1,1,1,1,1,1
---
-NOTE: There is no '--' in attendance records to be clear. There are no trailing ',' marks after the last entry on a line.
-There are no new lines after the last entry in the file
+
+NOTE: There are no trailing ',' marks after the last entry on a line. There are no new lines after the last entry in the file
  */
 
 public class RaspberryPiCommunication {

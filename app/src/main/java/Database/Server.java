@@ -14,22 +14,22 @@ import java.util.ArrayList;
 
 public class Server {
 
-    ServerSocket socketServer;
-    Socket clientSocket;
-    BufferedReader DIS;
-    DataOutputStream DOS;
-    LoginsCSV logins;
+    private ServerSocket socketServer;
+	private Socket clientSocket;
+	private BufferedReader DIS;
+	private DataOutputStream DOS;
+	private LoginsCSV logins;
 
-	String PATH = System.getProperty("user.dir") + "\\";
-	String PATH_FOR_ATTENDANCE_RECORDS = PATH + "records_for_";
-	String ATTENDANCE_EXTENTION = ".txt";
+	private String PATH = System.getProperty("user.dir") + "\\"; //Path to the current directory
+	private String PATH_FOR_ATTENDANCE_RECORDS = PATH + "records_for_"; //Path to directory with beginning of attendnace record file names
+	private String ATTENDANCE_EXTENTION = ".txt"; //Extention for attendance records
+
+	private String currentActiveAttendancePeriodClassName = null;
+	private attendancePeriodCSV activePeriod = null; //THe current active attendance period
+	private static double lat = 0;
+	private static double lon = 0;
     
-    String currentActiveAttendancePeriodClassName = null;
-    attendancePeriodCSV activePeriod = null;
-    static double lat = 0;
-    static double lon = 0;
-    
-    String command = "python " + PATH + "gpsCoord.py";
+    String command = "python " + PATH + "gpsCoord.py"; //Will replace this
 
     public Server() throws IOException, InterruptedException {
     	System.out.println(PATH);
@@ -45,20 +45,18 @@ public class Server {
     }
 
     public void getNextRequest() throws IOException {
-        Socket clientSocket = socketServer.accept(); //This is blocking. It will wait.
+        Socket clientSocket = socketServer.accept(); //This is blocking. It will wait for a new request
         Thread thr = new Thread(new Runnable() {
 			
 			@Override
-			public void run() {
-				// TODO Auto-generated method stub
+			public void run() { //Once a new request is recieved we make a new thread and run it
 				try {
-					DOS = new DataOutputStream(clientSocket.getOutputStream());
+					DOS = new DataOutputStream(clientSocket.getOutputStream()); //If this gives an error ignore it
 					DIS = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 			        String read = DIS.readLine();
 			        System.out.println(read + "--");
 			        serveRequest(read);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -66,9 +64,14 @@ public class Server {
         thr.start();
     }
 
+	/**
+	 * Function to serve a request that was recieved from the App
+	 * @param in A string that is the data recieved from the App
+	 * @throws IOException //If something goes wrong.
+	 */
     private void serveRequest(String in) throws IOException {
     	if(in == null) return;
-		checkAttendancePeriod();
+		checkAttendancePeriod(); //An active check to determine if the attendance period has expired
         String[] split = in.split("&");
         int code;
         try {
@@ -78,7 +81,7 @@ public class Server {
             return;
         }
         switch(code) {
-            case 0: //Logins
+            case 0: //Logins ----------------------
                 if (split.length != 3) {
                     DOS.writeBytes("102&Bad request\n");
                     return;
@@ -101,10 +104,9 @@ public class Server {
                 	DOS.writeBytes("103&Username and password did not match\n");
                 }
                 break;
-            case 1: //Register
+            case 1: //Register ------------------
                 if (split.length != 5) {
                     DOS.writeBytes("102&Bad request\n");
-                	clientSocket.close();
                     return;
                 }
                 username = split[1];
@@ -115,7 +117,6 @@ public class Server {
                     Integer.parseInt(isTeacher);
                 } catch(Exception e) {
                     DOS.writeBytes("102&Bad request\n");
-                	clientSocket.close();
                     return;
                 }
                 logins.addUser(username, password, name, isTeacher);
@@ -123,7 +124,7 @@ public class Server {
                 
                 DOS.writeBytes("0&Success!\n");
                 break;
-            case 2: //Student submit attendance
+            case 2: //Student submit attendance --------------------
                 if (split.length != 4) {
                     DOS.writeBytes("102&Bad request\n");
                     return;
@@ -153,7 +154,7 @@ public class Server {
                 else DOS.writeBytes("106&Student not found in class\n");
                 
                 break;
-            case 3: //Begin attendance period
+            case 3: //Begin attendance period ----------------------
             	if(activePeriod != null) {
             		DOS.writeBytes("108&Active attendance period!\n");
             		return;
@@ -183,7 +184,7 @@ public class Server {
 
 				System.out.println("1");
 				activePeriod = new attendancePeriodCSV(PATH_FOR_ATTENDANCE_RECORDS + className + ATTENDANCE_EXTENTION, realTimeInSeconds);
-				if(activePeriod == null || !activePeriod.exists()) {
+				if(!activePeriod.exists()) {
 					activePeriod = null;
 					DOS.writeBytes("109&Class does not exist\n");
 					return;
@@ -193,7 +194,7 @@ public class Server {
 				DOS.writeBytes("0&Success!\n");
 
                 break;
-            case 4: //Cancel attendance
+            case 4: //Cancel attendance --------------------
                 if (split.length != 2) {
                     DOS.writeBytes("102&Bad request\n");
                     return;
@@ -221,7 +222,7 @@ public class Server {
                 DOS.writeBytes("107&You don't have access to this class\n");
                 
                 break;
-            case 5: //Create new class AHAHHHHHHHHHHHHHHHHHHHHHHHHH
+            case 5: //Create new class -------------------------
             	if (split.length != 3) {
                     DOS.writeBytes("102&Bad request\n");
                     return;
@@ -262,7 +263,7 @@ public class Server {
                logins.write();
                DOS.writeUTF("0&Success!\n");
                 break;
-            case 6: //Delete class request
+            case 6: //Delete class request ---------------------
                 if (split.length != 3) {
                     DOS.writeBytes("102&Bad request\n");
                     return;
@@ -294,7 +295,7 @@ public class Server {
 				}
 				DOS.writeBytes("107&You do not have access\n");
                 break;
-            case 7: //Get record
+            case 7: //Get record ---------------------------------
                 if (split.length != 3) {
                     DOS.writeBytes("102&Bad request\n");
                     return;
@@ -342,9 +343,6 @@ public class Server {
 	               Math.sin(dLng/2) * Math.sin(dLng/2);
 	    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 	    float dist = (float) (earthRadius * c);
-
-	    System.out.println(dist);
-		System.out.println(dist > 5);
 		return (dist > 0.00473485);
 	    }
 
