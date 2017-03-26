@@ -7,8 +7,10 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -28,20 +30,12 @@ public class Server {
 	private attendancePeriodCSV activePeriod = null; //THe current active attendance period
 	private static double lat = 0;
 	private static double lon = 0;
-    
-    String command = "python " + PATH + "gpsCoord.py"; //Will replace this
 
     public Server() throws IOException, InterruptedException {
     	System.out.println(PATH);
         socketServer = new ServerSocket(1420);
         logins = new LoginsCSV(PATH + "//un");
-        //Process p = Runtime.getRuntime().exec(command);
-        //p.waitFor();
-
-        Scanner scanner = new Scanner(new File("gps.txt"));
-        lat = Double.parseDouble(scanner.nextLine());
-        lon = Double.parseDouble(scanner.nextLine());
-        scanner.close();
+		getGPS();
     }
 
     public void getNextRequest() throws IOException {
@@ -371,5 +365,40 @@ public class Server {
          while(scan.hasNextLine()) names.add(scan.nextLine());
          scan.close();
          return names;
+	}
+
+	private void getGPS() {
+		URL url;
+		try {
+			url = new URL("http://freegeoip.net/json");
+		} catch (MalformedURLException e) {
+			System.out.println("We can not run because we can not connect to the website required to pull GPS.");
+			System.exit(0);
+			return;
+		}
+		Scanner scanner = null;
+		try {
+			scanner = new Scanner(url.openStream());
+		} catch (IOException e) {
+			System.out.println("We can not run because we can not connect to the website required to pull GPS.");
+			System.exit(0);
+			return;
+		}
+		String str = "";
+		while(scanner.hasNextLine()) {
+			str = str + scanner.nextLine();
+		}
+		scanner.close();
+		String[] split = str.split(",");
+		for(String string : split) {
+			if(string.contains("latitude")) {
+				String[] moresplit = string.split(":");
+				lat = Double.parseDouble(moresplit[1]);
+			}
+			if(string.contains("longitude")) {
+				String[] moresplit = string.split(":");
+				lon = Double.parseDouble(moresplit[1]);
+			}
+		}
 	}
 }
