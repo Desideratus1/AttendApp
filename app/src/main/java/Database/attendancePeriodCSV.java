@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -19,7 +20,7 @@ public class attendancePeriodCSV {
 		endTime = time;
 
 		file = new File(fileNameWithPath);
-		heds = new ArrayList<String>();
+		heds = new ArrayList<>();
 
 		Scanner scan;
 		try {
@@ -28,10 +29,8 @@ public class attendancePeriodCSV {
 			return;
 		}
 		String[] headers = scan.nextLine().split(",");
-		
-		for(String str : headers) {
-			heds.add(str);
-		}
+
+		Collections.addAll(heds, headers);
 		
 		while(scan.hasNextLine()) {
 			data.add(scan.nextLine().split(","));
@@ -87,14 +86,14 @@ public class attendancePeriodCSV {
 		StringBuilder toReturn = new StringBuilder("Date,");
 		
 		for(String str : heds) {
-			toReturn.append(str + ",");
+			toReturn.append(str).append(",");
 		}
 		toReturn.deleteCharAt(toReturn.length()-1);
 		toReturn.append("\n");
 		
 		for(String[] list : data) {
 			for(String str : list) {
-				toReturn.append(str.replaceAll(" +", " ").trim() +  ",");
+				toReturn.append(str.replaceAll(" +", " ").trim()).append(",");
 			}
 			toReturn.deleteCharAt(toReturn.length()-1);
 			toReturn.append("\n");

@@ -247,7 +247,7 @@ public class Server {
                FileWriter writer = new FileWriter(newClass);
                StringBuilder toWrite = new StringBuilder("Date,");
                for(String str : f) {
-            	   toWrite.append(str +  ",");
+            	   toWrite.append(str).append(",");
    			   }
                toWrite.deleteCharAt(toWrite.length()-1);
                writer.write(toWrite.toString());
