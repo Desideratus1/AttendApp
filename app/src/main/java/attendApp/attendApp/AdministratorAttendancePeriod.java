@@ -77,7 +77,6 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
                     }
 
                     String[] split = comm.getDataFromRaspberryPi();
-					comm.end();
                     response = split[1];
                     return;
                 } catch (Exception e) {

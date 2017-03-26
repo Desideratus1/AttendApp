@@ -74,7 +74,6 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void run() {
                 try {
-                    //TODO: Data to and from Raspberry Pi, send them back to the login screen if they succeeded
                     comm = new RaspberryPiCommunication();
                     String username = usernameField.getText().toString();
                     String password = passwordField.getText().toString();
@@ -94,8 +93,6 @@ public class RegisterActivity extends AppCompatActivity {
                         response = split[1];
                         return;
                     }
-
-                    comm.end(); //Kill the link
                     flag = true;
                 } catch (Exception e) {
                     e.printStackTrace();

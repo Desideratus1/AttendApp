@@ -70,19 +70,16 @@ public class LoginActivity extends AppCompatActivity {
                     String password = passwordField.getText().toString();
 
                     Boolean b = comm.sendDataToRaspberryPi("0&" + username + "&" + password);
-					Log.d("BAD","BAD");
                     if(!b) {
                         response = "Data could not be sent";
                         return;
                     }
                     split = comm.getDataFromRaspberryPi();
-                    comm.end();
                     int code = Integer.parseInt(split[0]);
                     response = split[1];
                     c = (byte) code;
                 } catch (Exception e) {
                     response = "Networking errors; Unable to connect to server";
-                    return;
                 }
             }
         });

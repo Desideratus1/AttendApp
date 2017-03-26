@@ -65,7 +65,6 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
                     }
 
                     String[] split = comm.getDataFromRaspberryPi();
-                    comm.end();
                     int code = Integer.parseInt(split[0]);
 
                     if(code != 3) {

@@ -56,7 +56,6 @@ public class AdministratorNewClass extends AppCompatActivity {
 					}
 
 					String[] split = comm.getDataFromRaspberryPi();
-					comm.end();
 					response = split[1];
 				} catch (Exception e) {
 					e.printStackTrace();
