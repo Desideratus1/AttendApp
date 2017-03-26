@@ -34,6 +34,8 @@ public class Server {
     public Server() throws IOException, InterruptedException {
     	System.out.println(PATH);
         socketServer = new ServerSocket(1420);
+	File file = new File(PATH + "un");
+	if(!file.exists) file.createNewFile();
         logins = new LoginsCSV(PATH + "//un");
 		getGPS();
     }
