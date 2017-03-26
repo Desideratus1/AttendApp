@@ -134,6 +134,7 @@ public class Server {
                 }
                 
                 if(tooFarAway(Double.parseDouble(lat), Double.parseDouble(lon))) {
+                	System.out.println("fuck white people");
                 	DOS.writeBytes("110&You are too far away! Get closer!\n");
                 	return;
                 }
@@ -328,7 +329,9 @@ public class Server {
     }
 
 	public static boolean tooFarAway(double lat2, double lon2) {
-		if(lat2 == lat && lon2 == lon) return true;
+		System.out.println("checking distance");
+		if(lat2 == lat && lon2 == lon) return false;
+		System.out.println("nope");
 	    double earthRadius = 6371000; //meters
 	    double dLat = Math.toRadians(lat2-lat);
 	    double dLng = Math.toRadians(lon2-lon);
@@ -337,7 +340,8 @@ public class Server {
 	               Math.sin(dLng/2) * Math.sin(dLng/2);
 	    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 	    float dist = (float) (earthRadius * c);
-		return (dist > 0.00473485);
+	    System.out.println(dist);
+		return (dist > 100);//0.00473485);
 	    }
 
 	private void checkAttendancePeriod() {
@@ -345,6 +349,7 @@ public class Server {
 		else try {
 			if(activePeriod.endAttendancePeriod()) {
 				currentActiveAttendancePeriodClassName = null;
+				activePeriod = null;
 				return;
 			}
 		} catch (IOException e) {
