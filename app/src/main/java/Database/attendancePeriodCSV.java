@@ -29,7 +29,6 @@ public class attendancePeriodCSV {
 			return;
 		}
 		String[] headers = scan.nextLine().split(",");
-
 		Collections.addAll(heds, headers);
 		
 		while(scan.hasNextLine()) {
@@ -56,9 +55,7 @@ public class attendancePeriodCSV {
 		if(!isFinished()) return false;
 
 		data.add(period);
-		FileWriter writer = new FileWriter(file);
-		writer.write(toString());
-		writer.close();
+		write();
 		return true;
 	}
 	
@@ -83,20 +80,20 @@ public class attendancePeriodCSV {
 	}
 	
 	public String toString() {
-		StringBuilder toReturn = new StringBuilder("Date,");
+		StringBuilder toReturn = new StringBuilder("");
 		
 		for(String str : heds) {
 			toReturn.append(str).append(",");
 		}
 		toReturn.deleteCharAt(toReturn.length()-1);
-		toReturn.append("\n");
+		toReturn.append(System.getProperty("line.separator"));
 		
 		for(String[] list : data) {
 			for(String str : list) {
 				toReturn.append(str.replaceAll(" +", " ").trim()).append(",");
 			}
 			toReturn.deleteCharAt(toReturn.length()-1);
-			toReturn.append("\n");
+			toReturn.append(System.getProperty("line.separator"));
 		}
 		return toReturn.toString();
 		//Date,Name1,Name2,Name3,...Name?\n (\n means new line, there is no ',' after the final entry in that line
