@@ -48,6 +48,7 @@ public class AdministratorDeleteClass extends AppCompatActivity {
             @Override
             public void run() {
                 try {
+                    comm = new RaspberryPiCommunication();
                     Boolean b = comm.sendDataToRaspberryPi(
                             "6&" + username + "&" + className.getText().toString()
                     );

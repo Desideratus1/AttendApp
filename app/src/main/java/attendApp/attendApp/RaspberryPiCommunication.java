@@ -67,7 +67,7 @@ NOTE: There are no trailing ',' marks after the last entry on a line. There are 
  */
 
 public class RaspberryPiCommunication {
-    private String RASPBERRY_PI_IP = "10.255.80.30";
+    private String RASPBERRY_PI_IP = "10.255.111.224";
     private int RASPBERRY_PI_PORT = 1420;
     private Socket socket;
     private DataOutputStream DOS;
