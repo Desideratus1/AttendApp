@@ -14,6 +14,8 @@ import java.net.URL;
 import java.util.Scanner;
 import java.util.ArrayList;
 
+import attendApp.attendApp.*;
+
 public class Server {
 
     private ServerSocket socketServer;
@@ -30,6 +32,8 @@ public class Server {
 	private attendancePeriodCSV activePeriod = null; //THe current active attendance period
 	private static double lat = 0;
 	private static double lon = 0;
+
+	Encryption en = new Encryption();
 
     public Server() throws IOException, InterruptedException {
     	System.out.println(PATH);
@@ -49,7 +53,7 @@ public class Server {
 				try {
 					DOS = new DataOutputStream(clientSocket.getOutputStream()); //If this gives an error ignore it
 					DIS = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-			        String read = DIS.readLine();
+			        String read = en.decrypt(DIS.readLine());
 			        System.out.println(read + "--");
 			        serveRequest(read);
 				} catch (IOException e) {
@@ -323,7 +327,7 @@ public class Server {
 				}
 
                 String response = classDat.toString();
-                DOS.writeBytes("3&" + response.replaceAll("\n","|")+ "\n"); //This has to be this kind of call
+                DOS.writeBytes(en.encrypt("3&" + response.replaceAll("\n","|")+ "\n")); //This has to be this kind of call
                 break;
 
         }
@@ -410,7 +414,7 @@ public class Server {
 
 	void sendData(DataOutputStream DOS, int code, String resp) {
 		try {
-			DOS.writeBytes(code + resp + "\n");
+			DOS.writeBytes(en.encrypt(code + resp + "\n"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

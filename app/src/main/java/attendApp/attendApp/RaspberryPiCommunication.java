@@ -72,6 +72,7 @@ public class RaspberryPiCommunication {
     private Socket socket;
     private DataOutputStream DOS;
     private BufferedReader DIS;
+	Encryption en = new Encryption();
 
 
     public RaspberryPiCommunication() {
@@ -102,7 +103,7 @@ public class RaspberryPiCommunication {
                 ts.append(str + "&");
             }
             ts.deleteCharAt(ts.length()-1);
-            DOS.writeBytes(ts + "\n");
+            DOS.writeBytes(en.encrypt(ts + "\n"));
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -121,7 +122,7 @@ public class RaspberryPiCommunication {
 
         String toReturn;
         try {
-            toReturn = DIS.readLine();
+            toReturn = en.decrypt(DIS.readLine());
         } catch (Exception e) {
             return new String[] {"101", "Failure to read from Raspberry Pi"};
         }
