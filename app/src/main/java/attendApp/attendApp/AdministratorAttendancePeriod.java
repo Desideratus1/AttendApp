@@ -69,7 +69,7 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
                     }
 
                     Boolean b = comm.sendDataToRaspberryPi(
-                            "3&" + username + "&" + timeInSeconds + "&" + className.getText().toString()
+                            new String[] {"3", username, Integer.toString(timeInSeconds), className.getText().toString()}
                     );
                     if(!b) {
                         response = "Data could not be sent";
@@ -107,7 +107,7 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
             public void run() {
                 try {
                     Boolean b = comm.sendDataToRaspberryPi(
-                            "4&" + username
+                            new String[] {"4", username }
                     );
                     if(!b) {
                         response = "Data could not be sent";

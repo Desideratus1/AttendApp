@@ -89,7 +89,8 @@ public class StudentDashboard extends AppCompatActivity {
 					return;
 				}
                 try {
-                    Boolean b = comm.sendDataToRaspberryPi("2&" + username + "&" + lat + "&" + lon);
+                    Boolean b = comm.sendDataToRaspberryPi(
+							new String[] {"2", username, Double.toString(lat), Double.toString(lon) });
                     if(!b) {
                         response = "Data could not be sent";
 						success = false;

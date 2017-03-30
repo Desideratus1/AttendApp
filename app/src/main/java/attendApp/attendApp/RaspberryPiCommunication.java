@@ -89,7 +89,7 @@ public class RaspberryPiCommunication {
      * @param toSend, the String to be sent to the Raspberry Pi
      * @return if sucessful, true. Else, false.
      */
-    boolean sendDataToRaspberryPi(String toSend) {
+    boolean sendDataToRaspberryPi(String[] toSend) {
         int tries = 0;
         while(DOS == null && !reinitialize()) {
             tries++;
@@ -97,7 +97,12 @@ public class RaspberryPiCommunication {
         }
 
         try {
-            DOS.writeBytes(toSend + "\n");
+            StringBuilder ts = new StringBuilder();
+            for(String str : toSend) {
+                ts.append(str + "&");
+            }
+            ts.deleteCharAt(ts.length()-1);
+            DOS.writeBytes(ts + "\n");
         } catch (IOException e) {
             e.printStackTrace();
             return false;

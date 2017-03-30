@@ -7,10 +7,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-/**
- * Created by drpac on 2/20/2017.
- */
-
 public class AdministratorDeleteClass extends AppCompatActivity {
     Button deleteClass;
     TextView deleteClassText;
@@ -50,7 +46,7 @@ public class AdministratorDeleteClass extends AppCompatActivity {
                 try {
                     comm = new RaspberryPiCommunication();
                     Boolean b = comm.sendDataToRaspberryPi(
-                            "6&" + username + "&" + className.getText().toString()
+                            new String[] {"6", username, className.getText().toString()}
                     );
                     if(!b) {
                         deleteClassText.setText("Data could not be sent");

@@ -57,7 +57,7 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
                 try {
                     comm = new RaspberryPiCommunication();
                     Boolean b = comm.sendDataToRaspberryPi(
-                            "7&" + username + "&" + className.getText().toString()
+                            new String[] {"7", username, className.getText().toString() }
                     );
                     if(!b) {
                         response = "Data could not be sent";

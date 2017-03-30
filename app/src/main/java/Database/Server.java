@@ -73,13 +73,13 @@ public class Server {
         try {
             code = Integer.parseInt(split[0]);
         } catch(Exception e) {
-            DOS.writeBytes("102&Bad request\n");
+			sendData(DOS, 102, "Bad request");
             return;
         }
         switch(code) {
             case 0: //Logins ----------------------
                 if (split.length != 3) {
-                    DOS.writeBytes("102&Bad request\n");
+					sendData(DOS, 102, "Bad request");
                     return;
                 }
                 
@@ -89,20 +89,20 @@ public class Server {
                 User user = logins.getUser(username);
                 
                 if(user == null) {
-                	DOS.writeBytes("103&Username and password did not match\n");
+					sendData(DOS, 103, "Username and password do not match");
                 	return;
                 }
                 
                 if(username.equals(user.getUsername()) && password.equals(user.getPassword())) {
-                	if(user.isTeacher()) DOS.writeBytes("1&Teacher\n");
-                	else DOS.writeBytes("0&Is not teacher\n");
+                	if(user.isTeacher()) sendData(DOS, 1, "This user is a teacher");
+                	else sendData(DOS, 0, "This user is a student");
                 } else {
-                	DOS.writeBytes("103&Username and password did not match\n");
+                	sendData(DOS, 103, "Username and password do not match");
                 }
                 break;
             case 1: //Register ------------------
                 if (split.length != 5) {
-                    DOS.writeBytes("102&Bad request\n");
+					sendData(DOS, 102, "Bad request");
                     return;
                 }
                 username = split[1];
@@ -112,17 +112,17 @@ public class Server {
                 try {
                     Integer.parseInt(isTeacher);
                 } catch(Exception e) {
-                    DOS.writeBytes("102&Bad request\n");
+					sendData(DOS, 102, "Bad request");
                     return;
                 }
                 logins.addUser(username, password, name, isTeacher);
                 logins.write();
-                
-                DOS.writeBytes("0&Success!\n");
+
+				sendData(DOS, 0, "Success!");
                 break;
             case 2: //Student submit attendance --------------------
                 if (split.length != 4) {
-                    DOS.writeBytes("102&Bad request\n");
+					sendData(DOS, 102, "Bad request");
                     return;
                 }
                 username = split[1];
@@ -131,34 +131,33 @@ public class Server {
                 
                 user = logins.getUser(username);
                 if(user == null) {
-                	DOS.writeBytes("104&Error retrieving account\n");
+					sendData(DOS, 104, "Error retrieving account");
                 	return;
                 }
                 
                 if(tooFarAway(Double.parseDouble(lat), Double.parseDouble(lon))) {
-                	System.out.println("fuck white people");
-                	DOS.writeBytes("110&You are too far away! Get closer!\n");
+					sendData(DOS, 110, "You're too far away!");
                 	return;
                 }
                 
                 if(currentActiveAttendancePeriodClassName == null) {
-                	DOS.writeBytes("105& No active attendance period\n");
+					sendData(DOS, 105, "No active attendance period");
                 	return;
                 }
                 
                 boolean b = activePeriod.submitAttendance(user.getName());
-                if(b) DOS.writeBytes("0&Attendance recieved!\n");
-                else DOS.writeBytes("106&Student not found in class\n");
+                if(b) sendData(DOS, 0, "Attendance recieved!");
+                else sendData(DOS, 106, "Student not found in class");
                 
                 break;
             case 3: //Begin attendance period ----------------------
             	if(activePeriod != null) {
-            		DOS.writeBytes("108&Active attendance period!\n");
+					sendData(DOS, 108, "Active attendance period");
             		return;
             	}
             	
                 if (split.length != 4) {
-                    DOS.writeBytes("102&Bad request\n");
+					sendData(DOS, 102, "Bad request");
                     return;
                 }
                 username = split[1];
@@ -169,13 +168,13 @@ public class Server {
                 try {
                     realTimeInSeconds = Integer.parseInt(timeAsStr);
                 } catch(Exception e) {
-                    DOS.writeBytes("102&Bad request\n");
+					sendData(DOS, 102, "Bad request");
 					return;
                 }
 
 				user = logins.getUser(username);
 				if(user == null) {
-					DOS.writeBytes("104&Error retrieving account\n");
+					sendData(DOS, 104, "Error retrieving account");
 					return;
 				}
 
@@ -183,22 +182,22 @@ public class Server {
 				activePeriod = new attendancePeriodCSV(PATH_FOR_ATTENDANCE_RECORDS + className + ATTENDANCE_EXTENTION, realTimeInSeconds);
 				if(!activePeriod.exists()) {
 					activePeriod = null;
-					DOS.writeBytes("109&Class does not exist\n");
+					sendData(DOS, 109, "Class does not exist");
 					return;
 				}
 				currentActiveAttendancePeriodClassName = className;
 				activePeriod.beginAttendancePeriod();
-				DOS.writeBytes("0&Success!\n");
+				sendData(DOS, 0, "Success!");
 
                 break;
             case 4: //Cancel attendance --------------------
                 if (split.length != 2) {
-                    DOS.writeBytes("102&Bad request\n");
+					sendData(DOS, 102, "Bad request");
                     return;
                 }
                 
                 if(currentActiveAttendancePeriodClassName == null) {
-                	DOS.writeBytes("105& No active attendance period\n");
+					sendData(DOS, 105, "No active attendance period");
                 	return;
                 }
                 
@@ -206,22 +205,22 @@ public class Server {
                 user = logins.getUser(username);
                 
                 if(user == null) {
-                	DOS.writeBytes("104&Error retrieving account\n");
+					sendData(DOS, 104, "Error retrieving account");
                 	return;
                 }
 
 				if (user.hasAccessToClass(currentActiveAttendancePeriodClassName)) {
 					activePeriod.cancelAttendancePeriod();
-					DOS.writeBytes("0&Success!\n");
+					sendData(DOS, 0, "Success!");
 					return;
 				}
 
-                DOS.writeBytes("107&You don't have access to this class\n");
-                
-                break;
+				sendData(DOS, 107, "You don't have access to this class");
+
+				break;
             case 5: //Create new class -------------------------
             	if (split.length != 3) {
-                    DOS.writeBytes("102&Bad request\n");
+					sendData(DOS, 102, "Bad request");
                     return;
                 }
             	username = split[1];
@@ -230,19 +229,19 @@ public class Server {
             	user = logins.getUser(username);
                 
                 if(user == null) {
-                	DOS.writeBytes("104&Error retrieving account\n");
+					sendData(DOS, 104, "Error retrieving account");
                 	return;
                 }
                 
                 File newClass = new File("records_for_" + className + ATTENDANCE_EXTENTION);
                 if(newClass.exists()) {
-             	   DOS.writeBytes("111&This file exists, we can not make a new class out of it. Delete this class first\n");
+					sendData(DOS, 111, "This file exists, we can not make a new class out of it. Delete this class first");
              	   return;
                 }
                 
                ArrayList<String> f = extractDataForNewClass(PATH + className + ".txt");
                if(f == null) {
-            	   DOS.writeBytes("112&File does not exist\n");
+				   sendData(DOS, 112, "File does not exist");
             	   return;
                }
                newClass.createNewFile();
@@ -258,24 +257,24 @@ public class Server {
                
                user.addClass(className);
                logins.write();
-               DOS.writeUTF("0&Success!\n");
+				sendData(DOS, 0, "Success");
                 break;
             case 6: //Delete class request ---------------------
                 if (split.length != 3) {
-                    DOS.writeBytes("102&Bad request\n");
+					sendData(DOS, 102, "Bad request");
                     return;
                 }
                 username = split[1];
                 className = split[2];
 
 				if(activePeriod != null) {
-					DOS.writeBytes("108&There is an active attendance period\n");
+					sendData(DOS, 108, "There is an active attendance period");
 					return;
 				}
 
 				user = logins.getUser(username);
 				if(user == null) {
-					DOS.writeBytes("104&Failure to retrieve account\n");
+					sendData(DOS, 104, "Failure to retrieve account");
 					return;
 				}
 
@@ -283,18 +282,18 @@ public class Server {
 					File file = new File(PATH_FOR_ATTENDANCE_RECORDS + className + ATTENDANCE_EXTENTION);
 					if(file.exists()) {
 						file.delete();
-						DOS.writeBytes("0&Success!\n");
+						sendData(DOS, 0, "Success!");
 						return;
 					} else {
-						DOS.writeBytes("109&The class doesn't exist!\n");
+						sendData(DOS, 109, "The class doesn't exist!");
 						return;
 					}
 				}
-				DOS.writeBytes("107&You do not have access\n");
+				sendData(DOS, 107, "You do not have access!");
                 break;
             case 7: //Get record ---------------------------------
                 if (split.length != 3) {
-                    DOS.writeBytes("102&Bad request\n");
+					sendData(DOS, 102, "Bad request");
                     return;
                 }
 
@@ -303,28 +302,28 @@ public class Server {
 
 
 				if(currentActiveAttendancePeriodClassName != null && className.equals(currentActiveAttendancePeriodClassName)) {
-					DOS.writeBytes("108&The class you want is currently active!\n");
+					sendData(DOS, 108, "The class you want is currently active!");
 					return;
 				}
 
 				user = logins.getUser(username);
 				if(user == null) {
-					DOS.writeBytes("104&Failure to retrieve account\n");
+					sendData(DOS, 104, "Failure to retrieve account");
 					return;
 				}
 
 				if(!user.hasAccessToClass(className)) {
-					DOS.writeBytes("107&You don't have access to this class!\n");
+					sendData(DOS, 107, "You don't have access to this class!");
 					return;
 				}
 
 				attendancePeriodCSV classDat = new attendancePeriodCSV(PATH_FOR_ATTENDANCE_RECORDS + className,100);
 				if(!classDat.exists()) {
-					DOS.writeBytes("109&The class doesn't exist!\n");
+					sendData(DOS, 109, "The class doesn't exist!");
 				}
 
                 String response = classDat.toString();
-                DOS.writeBytes("3&" + response.replaceAll("\n","|")+ "\n");
+                DOS.writeBytes("3&" + response.replaceAll("\n","|")+ "\n"); //This has to be this kind of call
                 break;
 
         }
@@ -406,6 +405,14 @@ public class Server {
 				String[] moresplit = string.split(":");
 				lon = Double.parseDouble(moresplit[1]);
 			}
+		}
+	}
+
+	void sendData(DataOutputStream DOS, int code, String resp) {
+		try {
+			DOS.writeBytes(code + resp + "\n");
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

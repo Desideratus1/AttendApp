@@ -69,7 +69,8 @@ public class LoginActivity extends AppCompatActivity {
                     String username = usernameField.getText().toString();
                     String password = passwordField.getText().toString();
 
-                    Boolean b = comm.sendDataToRaspberryPi("0&" + username + "&" + password);
+                    Boolean b = comm.sendDataToRaspberryPi(
+                            new String[] {"0", username, password });
                     if(!b) {
                         response = "Data could not be sent";
                         return;

@@ -48,7 +48,7 @@ public class AdministratorNewClass extends AppCompatActivity {
 				try {
 					comm = new RaspberryPiCommunication();
 					Boolean b = comm.sendDataToRaspberryPi(
-							"5&" + username + "&" + className.getText().toString()
+							new String[] {"5", username, className.getText().toString() }
 					);
 					if(!b) {
 						response = "Data could not be sent";
