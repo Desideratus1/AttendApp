@@ -31,7 +31,6 @@ public class Server {
 	private attendancePeriodCSV activePeriod = null; //THe current active attendance period
 	private static double lat = 0;
 	private static double lon = 0;
-	private static final byte DELIMITER = (byte) '\n';
 
 	Encryption en = new Encryption();
 
@@ -53,14 +52,16 @@ public class Server {
 				try {
 					DOS = new DataOutputStream(clientSocket.getOutputStream()); //If this gives an error ignore it
 					DIS = new DataInputStream(clientSocket.getInputStream());
-					byte size = DIS.readByte();
-					byte[] h = new byte[size];
+					int val = DIS.readInt();
+					System.out.println(val);
+					byte[] h = new byte[val];
 					int count = 0;
-					while(count != size) {
+					while(count != val) {
 						h[count] = DIS.readByte();
 						count++;
 					}
 					String read = en.decrypt(h);
+					System.out.println(read);
 					serveRequest(read);
 				} catch (IOException e) {
 					sendData(DOS, 102, "Bad request");
@@ -334,13 +335,13 @@ public class Server {
 					return;
 				}
 
-				attendancePeriodCSV classDat = new attendancePeriodCSV(PATH_FOR_ATTENDANCE_RECORDS + className,100);
+				attendancePeriodCSV classDat = new attendancePeriodCSV(PATH_FOR_ATTENDANCE_RECORDS + className + ".txt",100);
 				if(!classDat.exists()) {
 					sendData(DOS, 109, "The class doesn't exist!");
 				}
-
+				
                 String response = classDat.toString();
-                sendData(DOS, 3, response.replaceAll("\n","|")); //This has to be this kind of call
+                sendData(DOS, 3, response); //This has to be this kind of call
                 break;
 
         }
@@ -428,11 +429,12 @@ public class Server {
 	void sendData(DataOutputStream DOS, int code, String resp) {
 		try {
 			byte[] r = en.encrypt(code + "&" + resp);
-			DOS.writeByte((byte) r.length);
+			DOS.writeInt(r.length);
 			for(byte a : r) {
 				DOS.writeByte(a);
 			}
 			DOS.flush();
+			System.out.println("ed");
 			
 		} catch (IOException e) {
 			e.printStackTrace();

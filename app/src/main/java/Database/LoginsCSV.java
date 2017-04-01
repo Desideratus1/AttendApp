@@ -26,7 +26,7 @@ public class LoginsCSV {
 			String t = strs[3];
 			int ts = Integer.parseInt(t);
 			if(ts == 1) {
-				for(int i = 4; i > strs.length; i++) {
+				for(int i = 4; i < strs.length; i++) {
 					classes.add(strs[i]);
 				}
 			}
