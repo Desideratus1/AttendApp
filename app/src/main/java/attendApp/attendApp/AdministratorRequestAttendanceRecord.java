@@ -1,5 +1,6 @@
 package attendApp.attendApp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -30,12 +31,11 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         //TODO: GET USERNAME/PASSWORD
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.admin_delete_class_layout);
+        setContentView(R.layout.admin_request_record_layout);
 
         requestRecord = (Button) findViewById(R.id.request_record);
         requestRecordText = (TextView) findViewById(R.id.request_record_text);
         className = (EditText) findViewById(R.id.class_name);
-        email = (EditText) findViewById(R.id.request_record_email);
         username = getIntent().getStringExtra("USERNAME");
 
         requestRecord.setOnClickListener(
@@ -43,7 +43,10 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
                     public void onClick(View view) {
                         requestRecord(view);
 						if(!file.equals("")) {
-							//We got a good response
+							Intent n = new Intent(AdministratorRequestAttendanceRecord.this, AdministratorDisplayCSV.class);
+                            n.putExtra("TEXT", file);
+                            file = "";
+                            startActivity(n);
 						}
                     }
                 });
@@ -70,7 +73,7 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
                     if(code != 3) {
 						response = "The response we recieved from the server was not bad. Not your fault!";
 						return;
-					} else file = split[1].replaceAll("|","\n");
+					} else file = split[1];
 
 					//See RaspberryPiCommunication for information regarding how an attendance record is split.
 					/*ArrayList<String[]> disp = new ArrayList<String[]>();

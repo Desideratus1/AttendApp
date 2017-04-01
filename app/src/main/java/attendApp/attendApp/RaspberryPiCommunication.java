@@ -107,8 +107,8 @@ public class RaspberryPiCommunication {
             }
             ts.deleteCharAt(ts.length()-1);
 			byte[] b = en.encrypt(ts.toString());
-			byte length = (byte) b.length;
-			DOS.writeByte(length);
+			int length = b.length;
+			DOS.writeInt(length);
 			for(byte h : b) {
 				DOS.writeByte(h);
 			}
@@ -131,8 +131,8 @@ public class RaspberryPiCommunication {
 
         String toReturn;
         try {
-			byte size = DIS.readByte();
-			Log.d("size", Byte.toString(size));
+			int size = DIS.readInt();
+			Log.d("size of response", Integer.toString(size));
             byte[] h = new byte[size];
 			int count = 0;
 			while(count != size) {
