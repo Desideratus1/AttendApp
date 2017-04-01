@@ -1,6 +1,7 @@
 package Database;
 
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,13 +15,11 @@ import java.net.URL;
 import java.util.Scanner;
 import java.util.ArrayList;
 
-import attendApp.attendApp.*;
-
 public class Server {
 
     private ServerSocket socketServer;
 	private Socket clientSocket;
-	private BufferedReader DIS;
+	private DataInputStream DIS;
 	private DataOutputStream DOS;
 	private LoginsCSV logins;
 
@@ -32,6 +31,7 @@ public class Server {
 	private attendancePeriodCSV activePeriod = null; //THe current active attendance period
 	private static double lat = 0;
 	private static double lon = 0;
+	private static final byte DELIMITER = (byte) '\n';
 
 	Encryption en = new Encryption();
 
@@ -52,12 +52,18 @@ public class Server {
 			public void run() { //Once a new request is recieved we make a new thread and run it
 				try {
 					DOS = new DataOutputStream(clientSocket.getOutputStream()); //If this gives an error ignore it
-					DIS = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-			        String read = en.decrypt(DIS.readLine());
-			        System.out.println(read + "--");
-			        serveRequest(read);
+					DIS = new DataInputStream(clientSocket.getInputStream());
+					byte size = DIS.readByte();
+					byte[] h = new byte[size];
+					int count = 0;
+					while(count != size) {
+						h[count] = DIS.readByte();
+						count++;
+					}
+					String read = en.decrypt(h);
+					serveRequest(read);
 				} catch (IOException e) {
-					e.printStackTrace();
+					sendData(DOS, 102, "Bad request");
 				}
 			}
         });
@@ -82,6 +88,7 @@ public class Server {
         }
         switch(code) {
             case 0: //Logins ----------------------
+            	System.out.println("Serving login request...");
                 if (split.length != 3) {
 					sendData(DOS, 102, "Bad request");
                     return;
@@ -105,6 +112,7 @@ public class Server {
                 }
                 break;
             case 1: //Register ------------------
+            	System.out.println("Serving register request...");
                 if (split.length != 5) {
 					sendData(DOS, 102, "Bad request");
                     return;
@@ -125,6 +133,7 @@ public class Server {
 				sendData(DOS, 0, "Success!");
                 break;
             case 2: //Student submit attendance --------------------
+            	System.out.println("Service attendance submission...");
                 if (split.length != 4) {
 					sendData(DOS, 102, "Bad request");
                     return;
@@ -155,6 +164,7 @@ public class Server {
                 
                 break;
             case 3: //Begin attendance period ----------------------
+            	System.out.println("Beginning attendance period...");
             	if(activePeriod != null) {
 					sendData(DOS, 108, "Active attendance period");
             		return;
@@ -182,7 +192,6 @@ public class Server {
 					return;
 				}
 
-				System.out.println("1");
 				activePeriod = new attendancePeriodCSV(PATH_FOR_ATTENDANCE_RECORDS + className + ATTENDANCE_EXTENTION, realTimeInSeconds);
 				if(!activePeriod.exists()) {
 					activePeriod = null;
@@ -195,6 +204,7 @@ public class Server {
 
                 break;
             case 4: //Cancel attendance --------------------
+            	System.out.println("Serving attendance period cancellation request...");
                 if (split.length != 2) {
 					sendData(DOS, 102, "Bad request");
                     return;
@@ -223,6 +233,7 @@ public class Server {
 
 				break;
             case 5: //Create new class -------------------------
+            	System.out.println("Serving create new class request...");
             	if (split.length != 3) {
 					sendData(DOS, 102, "Bad request");
                     return;
@@ -264,6 +275,7 @@ public class Server {
 				sendData(DOS, 0, "Success");
                 break;
             case 6: //Delete class request ---------------------
+            	System.out.println("Serving delete class request...");
                 if (split.length != 3) {
 					sendData(DOS, 102, "Bad request");
                     return;
@@ -296,6 +308,7 @@ public class Server {
 				sendData(DOS, 107, "You do not have access!");
                 break;
             case 7: //Get record ---------------------------------
+            	System.out.println("Serving get record request...");
                 if (split.length != 3) {
 					sendData(DOS, 102, "Bad request");
                     return;
@@ -327,7 +340,7 @@ public class Server {
 				}
 
                 String response = classDat.toString();
-                DOS.writeBytes(en.encrypt("3&" + response.replaceAll("\n","|")+ "\n")); //This has to be this kind of call
+                sendData(DOS, 3, response.replaceAll("\n","|")); //This has to be this kind of call
                 break;
 
         }
@@ -414,7 +427,13 @@ public class Server {
 
 	void sendData(DataOutputStream DOS, int code, String resp) {
 		try {
-			DOS.writeBytes(en.encrypt(code + resp + "\n"));
+			byte[] r = en.encrypt(code + "&" + resp);
+			DOS.writeByte((byte) r.length);
+			for(byte a : r) {
+				DOS.writeByte(a);
+			}
+			DOS.flush();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -10,6 +10,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 public class Encryption
 {
@@ -26,22 +27,22 @@ public class Encryption
         }
     }*/
 
-    SecretKey k;
-    Encryption() {
-        SecureRandom i = new SecureRandom();
-        i.setSeed(100);
-        KeyGenerator keygenerator = null;
-        try {
-            keygenerator = KeyGenerator.getInstance("DES");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        keygenerator.init(56, i);
-        k = keygenerator.generateKey();
-    }
-    public String decrypt(String str) {
-        byte[] textEncrypted = str.getBytes();
-        String finalText = "";
+	byte[] encoded = {0,0,0,0,0,0,0,0};
+	SecretKey k;
+	Encryption() {
+		SecureRandom i = new SecureRandom();
+		i.setSeed(100);
+		KeyGenerator keygenerator = null;
+		try {
+			keygenerator = KeyGenerator.getInstance("DES");
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		keygenerator.init(56, i);
+		k = new SecretKeySpec(encoded, "DES");
+	}
+    public String decrypt(byte[] textEncrypted) {
+		String finalText = "";
         try {
             Cipher desCipher;
             desCipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
@@ -62,15 +63,15 @@ public class Encryption
         return finalText;
     }
 
-    public String encrypt(String string) {
-        byte [] textEncrypted = {0};
+    public byte[] encrypt(String string) {
+        byte[] textEncrypted = {0};
         try {
             Cipher desCipher;
             desCipher = Cipher.getInstance("DES/ECB/PKCS5Padding");
             desCipher.init(Cipher.ENCRYPT_MODE, k);
             byte[] text = string.getBytes();
             textEncrypted = desCipher.doFinal(text);
-            return new String(textEncrypted);
+            return textEncrypted;
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (NoSuchPaddingException e) {
@@ -82,6 +83,6 @@ public class Encryption
         } catch (BadPaddingException e) {
             e.printStackTrace();
         }
-        return new String(textEncrypted);
+        return textEncrypted;
     }
 }
