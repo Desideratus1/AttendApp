@@ -1,6 +1,9 @@
 package attendApp.attendApp;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -11,11 +14,11 @@ import java.net.Socket;
  */
 
 /*General Protocol
-1. The App sends data in the format "data&data&data...\n"
+1. The App sends data in the format "bytes&request_number&data&data...\n"
     The \n is a new line indicator and MUST BE AT THE END OF THE LINE. THIS CLASS HANDLES THIS ON THE APP'S SIDE
     & - which is ampersand if you can't read it - separates different datum
     So an example of this is: "0&username&password" - so it's a login request with 'password' and 'username' as data
-2. The Server will process the request and send back a response in the format "code&responseCode"
+2. The Server will process the request and send back a response in the format "bytes&code&responseCode"
 	code is an integer that is listed below in RESPONSE CODE LISTING (and ERRORS)
 	Response is just a string response we display on the App
 	NOTE: This is different for Message 7, getting an attendance period record
@@ -67,11 +70,11 @@ NOTE: There are no trailing ',' marks after the last entry on a line. There are 
  */
 
 public class RaspberryPiCommunication {
-    private String RASPBERRY_PI_IP = "10.255.111.224";
+    private String RASPBERRY_PI_IP = "10.0.0.12";
     private int RASPBERRY_PI_PORT = 1420;
     private Socket socket;
     private DataOutputStream DOS;
-    private BufferedReader DIS;
+    private DataInputStream DIS;
 	Encryption en = new Encryption();
 
 
@@ -79,7 +82,7 @@ public class RaspberryPiCommunication {
         try {
             socket = new Socket(RASPBERRY_PI_IP, RASPBERRY_PI_PORT);
             DOS = new DataOutputStream(socket.getOutputStream());
-            DIS = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            DIS = new DataInputStream(socket.getInputStream());
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -103,7 +106,13 @@ public class RaspberryPiCommunication {
                 ts.append(str + "&");
             }
             ts.deleteCharAt(ts.length()-1);
-            DOS.writeBytes(en.encrypt(ts + "\n"));
+			byte[] b = en.encrypt(ts.toString());
+			byte length = (byte) b.length;
+			DOS.writeByte(length);
+			for(byte h : b) {
+				DOS.writeByte(h);
+			}
+			DOS.flush();
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -122,7 +131,15 @@ public class RaspberryPiCommunication {
 
         String toReturn;
         try {
-            toReturn = en.decrypt(DIS.readLine());
+			byte size = DIS.readByte();
+			Log.d("size", Byte.toString(size));
+            byte[] h = new byte[size];
+			int count = 0;
+			while(count != size) {
+				h[count++] = DIS.readByte();
+			}
+			toReturn = en.decrypt(h);
+			Log.d("Returned", toReturn);
         } catch (Exception e) {
             return new String[] {"101", "Failure to read from Raspberry Pi"};
         }
@@ -144,7 +161,7 @@ public class RaspberryPiCommunication {
         try {
             socket = new Socket(RASPBERRY_PI_IP, RASPBERRY_PI_PORT);
             DOS = new DataOutputStream(socket.getOutputStream());
-            DIS = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            DIS = new DataInputStream(socket.getInputStream());
         } catch(Exception e) {
             socket = null;
             DOS = null;
