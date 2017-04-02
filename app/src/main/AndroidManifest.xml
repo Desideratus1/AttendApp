@@ -50,6 +50,14 @@
             android:name="attendApp.attendApp.RegisterActivity"
             android:label="@string/app_name" >
         </activity>
+        <activity
+            android:name="attendApp.attendApp.AdministratorRequestAttendanceRecord"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="attendApp.attendApp.AdministratorDisplayCSV"
+            android:label="@string/app_name" >
+        </activity>
     </application>
 
 </manifest>

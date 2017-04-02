@@ -11,7 +11,7 @@
         android:layout_centerHorizontal="true" />
 
     <Button
-        android:text="Request Record"
+        android:text="@string/request_record"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="21dp"
@@ -23,20 +23,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Class name"
+        android:hint="@string/class_name"
         android:ems="10"
         android:id="@+id/class_name"
-        android:layout_marginBottom="13dp"
-        android:layout_above="@+id/request_record"
-        android:layout_centerHorizontal="true" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:text="Full email (@gmail...)"
-        android:ems="10"
-        android:id="@+id/request_record_email"
         android:layout_marginBottom="13dp"
         android:layout_above="@+id/request_record"
         android:layout_centerHorizontal="true" />
