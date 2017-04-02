@@ -2,11 +2,9 @@ package attendApp.attendApp;
 
 import android.util.Log;
 
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.Socket;
 
 /**
@@ -70,7 +68,7 @@ NOTE: There are no trailing ',' marks after the last entry on a line. There are 
  */
 
 public class RaspberryPiCommunication {
-    private String RASPBERRY_PI_IP = "10.0.0.12";
+    private String RASPBERRY_PI_IP = "10.0.0.4";
     private int RASPBERRY_PI_PORT = 1420;
     private Socket socket;
     private DataOutputStream DOS;

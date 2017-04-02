@@ -101,12 +101,13 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             }
         });
-        networkThread.start();
-		try {
-			networkThread.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+        try {
+            networkThread.start();
+            networkThread.join(5*1000);
+            if(networkThread.isAlive()) response = "Could not connect to the Server.";
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         if (flag) startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
         else registerFailed.setText(response);
     }

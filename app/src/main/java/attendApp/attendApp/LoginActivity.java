@@ -61,6 +61,7 @@ public class LoginActivity extends AppCompatActivity {
      * @return byte that tells us if they are a teacher, student, or the username and password pair is not valid
      */
     private void usernameAndPasswordMatch(View view) {
+		loginButton.setEnabled(false);
         Thread networkThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -84,12 +85,14 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-        networkThread.start();
 		try {
-			networkThread.join();
+			networkThread.start();
+			networkThread.join(5*1000);
+			if(networkThread.isAlive()) response = "Could not connect to the Server.";
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		loginButton.setEnabled(true);
 	}
 
     private void login(View view) {

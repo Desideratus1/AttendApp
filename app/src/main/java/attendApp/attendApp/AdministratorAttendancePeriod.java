@@ -85,13 +85,14 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
                 }
             }
         });
-        networkThread.start();
-
         try {
-            networkThread.join();
+            networkThread.start();
+            networkThread.join(5*1000);
+            if(networkThread.isAlive()) response = "Could not connect to the Server.";
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
 
         attendanceText.setText(response);
     }
@@ -126,13 +127,13 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
                 }
             }
         });
-        networkThread.start();
-
-		try {
-			networkThread.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+        try {
+            networkThread.start();
+            networkThread.join(5*1000);
+            if(networkThread.isAlive()) response = "Could not connect to the Server.";
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         attendanceText.setText(response);
     }

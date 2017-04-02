@@ -90,10 +90,10 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
                 }
             }
         });
-        networkThread.start();
-
         try {
-            networkThread.join();
+            networkThread.start();
+            networkThread.join(5*1000);
+            if(networkThread.isAlive()) response = "Could not connect to the Server.";
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
