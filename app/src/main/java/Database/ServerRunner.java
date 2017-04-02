@@ -9,6 +9,7 @@ public class ServerRunner {
 			while(true) serv.getNextRequest();
 		} catch (Exception e) {
 			System.out.println("Something caused the server to crash. Restarting...");
+			e.printStackTrace();
 		}
 	}
 }

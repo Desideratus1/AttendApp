@@ -1,13 +1,11 @@
 package Database;
 
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -18,14 +16,7 @@ import java.util.ArrayList;
 public class Server {
 
     private ServerSocket socketServer;
-	private Socket clientSocket;
-	private DataInputStream DIS;
-	private DataOutputStream DOS;
 	private LoginsCSV logins;
-
-	private String PATH = System.getProperty("user.dir") + "\\"; //Path to the current directory
-	private String PATH_FOR_ATTENDANCE_RECORDS = PATH + "records_for_"; //Path to directory with beginning of attendnace record file names
-	private String ATTENDANCE_EXTENTION = ".txt"; //Extention for attendance records
 
 	private String currentActiveAttendancePeriodClassName = null;
 	private attendancePeriodCSV activePeriod = null; //THe current active attendance period
@@ -35,25 +26,25 @@ public class Server {
 	Encryption en = new Encryption();
 
     public Server() throws IOException, InterruptedException {
-    	System.out.println(PATH);
         socketServer = new ServerSocket(1420);
-	File file = new File(PATH + "un");
+	File file = new File("un");
 	if(!file.exists()) file.createNewFile();
-        logins = new LoginsCSV(PATH + "//un");
+        logins = new LoginsCSV("un");
 		getGPS();
     }
 
     public void getNextRequest() throws IOException {
-        final Socket clientSocket = socketServer.accept(); //This is blocking. It will wait for a new request
+        Socket clientSocket = socketServer.accept(); //This is blocking. It will wait for a new request
         Thread thr = new Thread(new Runnable() {
 			
 			@Override
 			public void run() { //Once a new request is recieved we make a new thread and run it
+				DataOutputStream DOS;
+				DataInputStream DIS;
 				try {
 					DOS = new DataOutputStream(clientSocket.getOutputStream()); //If this gives an error ignore it
 					DIS = new DataInputStream(clientSocket.getInputStream());
 					int val = DIS.readInt();
-					System.out.println(val);
 					byte[] h = new byte[val];
 					int count = 0;
 					while(count != val) {
@@ -62,9 +53,9 @@ public class Server {
 					}
 					String read = en.decrypt(h);
 					System.out.println(read);
-					serveRequest(read);
+					serveRequest(read, DOS, DIS);
 				} catch (IOException e) {
-					sendData(DOS, 102, "Bad request");
+					System.out.println("Failure within Thread. Shutting it down...");
 				}
 			}
         });
@@ -76,7 +67,7 @@ public class Server {
 	 * @param in A string that is the data recieved from the App
 	 * @throws IOException //If something goes wrong.
 	 */
-    private void serveRequest(String in) throws IOException {
+    private void serveRequest(String in, DataOutputStream DOS, DataInputStream DIS) throws IOException {
     	if(in == null) return;
 		checkAttendancePeriod(); //An active check to determine if the attendance period has expired
         String[] split = in.split("&");
@@ -134,7 +125,7 @@ public class Server {
 				sendData(DOS, 0, "Success!");
                 break;
             case 2: //Student submit attendance --------------------
-            	System.out.println("Service attendance submission...");
+            	System.out.println("Servicing attendance submission...");
                 if (split.length != 4) {
 					sendData(DOS, 102, "Bad request");
                     return;
@@ -165,7 +156,7 @@ public class Server {
                 
                 break;
             case 3: //Begin attendance period ----------------------
-            	System.out.println("Beginning attendance period...");
+            	System.out.println("Servicing attendance period request...");
             	if(activePeriod != null) {
 					sendData(DOS, 108, "Active attendance period");
             		return;
@@ -193,7 +184,7 @@ public class Server {
 					return;
 				}
 
-				activePeriod = new attendancePeriodCSV(PATH_FOR_ATTENDANCE_RECORDS + className + ATTENDANCE_EXTENTION, realTimeInSeconds);
+				activePeriod = new attendancePeriodCSV("records_for_" + className + ".txt", realTimeInSeconds);
 				if(!activePeriod.exists()) {
 					activePeriod = null;
 					sendData(DOS, 109, "Class does not exist");
@@ -202,6 +193,9 @@ public class Server {
 				currentActiveAttendancePeriodClassName = className;
 				activePeriod.beginAttendancePeriod();
 				sendData(DOS, 0, "Success!");
+				
+				System.out.println("Attendance period for class \" " + className + "\" has started. It");
+				System.out.println("It will end in " + realTimeInSeconds + " seconds.");
 
                 break;
             case 4: //Cancel attendance --------------------
@@ -249,13 +243,13 @@ public class Server {
                 	return;
                 }
                 
-                File newClass = new File("records_for_" + className + ATTENDANCE_EXTENTION);
+                File newClass = new File("records_for_" + className + ".txt");
                 if(newClass.exists()) {
 					sendData(DOS, 111, "This file exists, we can not make a new class out of it. Delete this class first");
              	   return;
                 }
                 
-               ArrayList<String> f = extractDataForNewClass(PATH + className + ".txt");
+               ArrayList<String> f = extractDataForNewClass(className + ".txt");
                if(f == null) {
 				   sendData(DOS, 112, "File does not exist");
             	   return;
@@ -296,7 +290,7 @@ public class Server {
 				}
 
 				if(user.hasAccessToClass(className)) {
-					File file = new File(PATH_FOR_ATTENDANCE_RECORDS + className + ATTENDANCE_EXTENTION);
+					File file = new File(className);
 					if(file.exists()) {
 						file.delete();
 						sendData(DOS, 0, "Success!");
@@ -335,7 +329,7 @@ public class Server {
 					return;
 				}
 
-				attendancePeriodCSV classDat = new attendancePeriodCSV(PATH_FOR_ATTENDANCE_RECORDS + className + ".txt",100);
+				attendancePeriodCSV classDat = new attendancePeriodCSV("records_for_" + className + ".txt",100);
 				if(!classDat.exists()) {
 					sendData(DOS, 109, "The class doesn't exist!");
 				}
@@ -348,9 +342,7 @@ public class Server {
     }
 
 	public static boolean tooFarAway(double lat2, double lon2) {
-		System.out.println("checking distance");
 		if(lat2 == lat && lon2 == lon) return false;
-		System.out.println("nope");
 	    double earthRadius = 6371000; //meters
 	    double dLat = Math.toRadians(lat2-lat);
 	    double dLng = Math.toRadians(lon2-lon);
@@ -359,7 +351,6 @@ public class Server {
 	               Math.sin(dLng/2) * Math.sin(dLng/2);
 	    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 	    float dist = (float) (earthRadius * c);
-	    System.out.println(dist);
 		return (dist > 100);//0.00473485);
 	    }
 
@@ -434,8 +425,6 @@ public class Server {
 				DOS.writeByte(a);
 			}
 			DOS.flush();
-			System.out.println("ed");
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
