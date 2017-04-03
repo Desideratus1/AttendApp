@@ -39,6 +39,10 @@ public class AdministratorDeleteClass extends AppCompatActivity {
                 });
     }
 
+	/**
+	 * Attemps to delete the class specified.
+	 * @param view
+	 */
     private void deleteClass(View view) {
         Thread networkThread = new Thread(new Runnable() {
             @Override

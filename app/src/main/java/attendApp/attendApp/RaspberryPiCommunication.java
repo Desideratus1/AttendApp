@@ -5,6 +5,7 @@ import android.util.Log;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
 /**
@@ -73,12 +74,13 @@ public class RaspberryPiCommunication {
     private Socket socket;
     private DataOutputStream DOS;
     private DataInputStream DIS;
-	Encryption en = new Encryption();
+	private Encryption en = new Encryption();
 
 
     public RaspberryPiCommunication() {
         try {
-            socket = new Socket(RASPBERRY_PI_IP, RASPBERRY_PI_PORT);
+            socket = new Socket();
+			socket.connect(new InetSocketAddress(RASPBERRY_PI_IP,RASPBERRY_PI_PORT),3*1000);
             DOS = new DataOutputStream(socket.getOutputStream());
             DIS = new DataInputStream(socket.getInputStream());
         } catch(Exception e) {
@@ -92,16 +94,12 @@ public class RaspberryPiCommunication {
      * @return if sucessful, true. Else, false.
      */
     boolean sendDataToRaspberryPi(String[] toSend) {
-        int tries = 0;
-        while(DOS == null && !reinitialize()) {
-            tries++;
-            if (tries == 20) return false;
-        }
+        if(DOS == null) return false;
 
         try {
             StringBuilder ts = new StringBuilder();
             for(String str : toSend) {
-                ts.append(str + "&");
+                ts.append(str).append("&");
             }
             ts.deleteCharAt(ts.length()-1);
 			byte[] b = en.encrypt(ts.toString());
@@ -149,24 +147,6 @@ public class RaspberryPiCommunication {
             return new String[] {"102","Bad response"};
         }
         return split;
-    }
-
-    /**
-     * If a problem with the connection to the Raspberry Pi occurs then we run this function
-     * @return If reinitialization is successful, true. Else, false.
-     */
-    private boolean reinitialize() {
-        try {
-            socket = new Socket(RASPBERRY_PI_IP, RASPBERRY_PI_PORT);
-            DOS = new DataOutputStream(socket.getOutputStream());
-            DIS = new DataInputStream(socket.getInputStream());
-        } catch(Exception e) {
-            socket = null;
-            DOS = null;
-            DIS = null;
-            return false;
-        }
-        return true;
     }
 
     /**

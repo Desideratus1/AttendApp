@@ -59,7 +59,6 @@ public class AdministratorDashboard extends AppCompatActivity {
     }
 
     //All these 4 functions do is tell us where to go when a button is pressed.
-    //TODO: Actually make these classes do something.
     private void beginAttendancePeriod(View view) {
         Intent k = new Intent(AdministratorDashboard.this, AdministratorAttendancePeriod.class);
         k.putExtra("USERNAME", username);

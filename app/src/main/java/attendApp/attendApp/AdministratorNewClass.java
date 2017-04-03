@@ -40,6 +40,10 @@ public class AdministratorNewClass extends AppCompatActivity {
 				});
 	}
 
+	/**
+	 * Attempts to create a new class with the current method.
+	 * @param view
+	 */
 	private void createClass(View view) {
 
 		Thread networkThread = new Thread(new Runnable() {

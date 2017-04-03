@@ -54,8 +54,10 @@ public class StudentDashboard extends AppCompatActivity {
                 });
     }
 
-    //Return true if successfully submitted
-    private void submitAttendance() {
+	/**
+	 * Function to attempt to submit attendance
+	 */
+	private void submitAttendance() {
         Thread networkThread = new Thread(new Runnable() {
             @Override
             public void run() {

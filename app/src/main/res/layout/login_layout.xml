@@ -46,6 +46,19 @@
         android:id="@+id/loginFailed"
         android:layout_width="200dp"
         android:layout_height="50dp"
+        android:textSize="20sp"
         android:layout_below="@+id/register"
-        android:textSize="20sp"/>
+        android:layout_alignLeft="@+id/password"
+        android:layout_alignStart="@+id/password"/>
+
+    <ProgressBar
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/loginFailed"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
+        android:id="@+id/progBar"
+        tools:visibility="invisible"
+        android:indeterminate="true"/>
 </RelativeLayout>

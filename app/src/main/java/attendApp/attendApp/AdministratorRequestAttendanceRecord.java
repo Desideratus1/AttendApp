@@ -52,6 +52,10 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
                 });
     }
 
+	/**
+	 * Records a record with the specified class
+	 * @param view
+	 */
     private void requestRecord(View view) {
 
         Thread networkThread = new Thread(new Runnable() {

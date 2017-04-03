@@ -17,6 +17,10 @@ import org.w3c.dom.Text;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+/**
+ * A class that will display the attendance records of the given class, if it exists.
+ * It is displayed in the regular table-style with the ability to scroll to view more of the screen.
+ */
 public class AdministratorDisplayCSV extends AppCompatActivity {
 
 	/**

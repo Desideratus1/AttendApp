@@ -11,6 +11,9 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class RegisterActivity extends AppCompatActivity {
 
     Button createButton;
@@ -78,6 +81,19 @@ public class RegisterActivity extends AppCompatActivity {
                     String username = usernameField.getText().toString();
                     String password = passwordField.getText().toString();
                     String fullName = fullNameField.getText().toString();
+
+					Pattern pat = Pattern.compile("^a-zA-Z0-9");
+					Pattern patPassword = Pattern.compile("^a-zA-Z0-9!@#$%^&*()_+");
+					Matcher mat = pat.matcher(username);
+					Matcher matPassword = patPassword.matcher(password);
+					if(mat.find()) {
+						response = "Your login contains non-alphanumeric letters.";
+						return;
+					}
+					if(matPassword.find()) {
+						response = "Your password contains illegal characters";
+					}
+
                     int isT;
                     if (isTeacher.isChecked()) isT = 1; //If they are a teacher this is one
                     else isT = 0; //Otherwise they're a student, 0

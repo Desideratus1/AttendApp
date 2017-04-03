@@ -34,7 +34,7 @@ public class Server {
     }
 
     public void getNextRequest() throws IOException {
-        Socket clientSocket = socketServer.accept(); //This is blocking. It will wait for a new request
+        final Socket clientSocket = socketServer.accept(); //This is blocking. It will wait for a new request
         Thread thr = new Thread(new Runnable() {
 			
 			@Override
