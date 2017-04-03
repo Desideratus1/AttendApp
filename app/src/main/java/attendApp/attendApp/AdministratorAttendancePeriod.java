@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class AdministratorAttendancePeriod extends AppCompatActivity {
@@ -18,6 +19,7 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
     RaspberryPiCommunication comm;
     String username;
     String response = "Unknown error";
+	ProgressBar bar;
     /**
      * Called when the activity is first created.
      */
@@ -58,13 +60,26 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
         Thread networkThread = new Thread(new Runnable() {
             @Override
             public void run() {
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						bar.setVisibility(View.VISIBLE);
+						attendanceText.setText("");
+					}
+				});
                 try {
                     comm = new RaspberryPiCommunication();
                     int timeInSeconds;
                     try {
                         timeInSeconds = Integer.parseInt(timeField.getText().toString())*60;
                     } catch(Exception e) {
-                        response = "The minutes you supplied is unusable.";
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								bar.setVisibility(View.INVISIBLE);
+								attendanceText.setText(new String("The minutes you supplied are unusable"));
+							}
+						});
                         return;
                     }
 
@@ -72,29 +87,41 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
                             new String[] {"3", username, Integer.toString(timeInSeconds), className.getText().toString()}
                     );
                     if(!b) {
-                        response = "Data could not be sent";
+
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								bar.setVisibility(View.INVISIBLE);
+								attendanceText.setText(new String("Data could not be sent"));
+							}
+						});
                         return;
                     }
 
-                    String[] split = comm.getDataFromRaspberryPi();
-                    response = split[1];
-                    return;
+                    final String[] split = comm.getDataFromRaspberryPi();
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							bar.setVisibility(View.INVISIBLE);
+
+							attendanceText.setText(split[1]);
+						}
+					});
                 } catch (Exception e) {
                     e.printStackTrace();
-					response = "Networking errors; Unable to connect to server";
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							bar.setVisibility(View.INVISIBLE);
+
+							attendanceText.setText(new String("Unable to connect to server"));
+						}
+					});
                 }
             }
         });
-        try {
-            networkThread.start();
-            networkThread.join(5*1000);
-            if(networkThread.isAlive()) response = "Could not connect to the Server.";
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-
-        attendanceText.setText(response);
+		networkThread.start();
+		attendanceText.setText(response);
     }
 
     /**
@@ -106,36 +133,41 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
         Thread networkThread = new Thread(new Runnable() {
             @Override
             public void run() {
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						bar.setVisibility(View.VISIBLE);
+					}
+				});
                 try {
                     Boolean b = comm.sendDataToRaspberryPi(
-                            new String[] {"4", username }
+							new String[] {"4", username }
                     );
                     if(!b) {
-                        response = "Data could not be sent";
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								bar.setVisibility(View.INVISIBLE);
+								attendanceText.setText(new String("Data could not be sent"));
+							}
+						});
                         return;
                     }
 
-                    String[] split = comm.getDataFromRaspberryPi();
-                    int code = Integer.parseInt(split[0]);
-                    if(code > 99) { //100+ is an error
-                        response = split[1];
-                        return;
-                    }
-                    response = "Success!";
+                    final String[] split = comm.getDataFromRaspberryPi();
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							bar.setVisibility(View.INVISIBLE);
+							attendanceText.setText(split[1]);
+						}
+					});
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
-        try {
-            networkThread.start();
-            networkThread.join(5*1000);
-            if(networkThread.isAlive()) response = "Could not connect to the Server.";
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        attendanceText.setText(response);
+		networkThread.start();
     }
 
 

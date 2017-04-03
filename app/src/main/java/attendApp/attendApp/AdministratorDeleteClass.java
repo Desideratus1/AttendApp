@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class AdministratorDeleteClass extends AppCompatActivity {
@@ -12,6 +13,7 @@ public class AdministratorDeleteClass extends AppCompatActivity {
     TextView deleteClassText;
     EditText className;
     RaspberryPiCommunication comm;
+	ProgressBar bar;
     String username;
     String response = "Unknown failure";
 
@@ -20,13 +22,13 @@ public class AdministratorDeleteClass extends AppCompatActivity {
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        //TODO: GET USERNAME/PASSWORD
         super.onCreate(savedInstanceState);
         setContentView(R.layout.admin_delete_class_layout);
 
         deleteClass = (Button) findViewById(R.id.delete_class);
         deleteClassText = (TextView) findViewById(R.id.delete_class_text);
         className = (EditText) findViewById(R.id.class_name);
+		bar = (ProgressBar) findViewById(R.id.bar);
         username = getIntent().getStringExtra("USERNAME");
 
         deleteClassText.setVisibility(View.INVISIBLE);
@@ -47,32 +49,50 @@ public class AdministratorDeleteClass extends AppCompatActivity {
         Thread networkThread = new Thread(new Runnable() {
             @Override
             public void run() {
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						bar.setVisibility(View.VISIBLE);
+						deleteClassText.setText("");
+					}
+				});
                 try {
                     comm = new RaspberryPiCommunication();
                     Boolean b = comm.sendDataToRaspberryPi(
                             new String[] {"6", username, className.getText().toString()}
                     );
                     if(!b) {
-                        deleteClassText.setText("Data could not be sent");
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								bar.setVisibility(View.INVISIBLE);
+								deleteClassText.setText("Data could not be sent");
+							}
+						});
                         return;
                     }
+                    final String[] response = comm.getDataFromRaspberryPi();
 
-                    String[] response = comm.getDataFromRaspberryPi();
-                    deleteClassText.setText(response[1]);
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							bar.setVisibility(View.INVISIBLE);
+							deleteClassText.setText(response[1]);
+						}
+					});
                 } catch (Exception e) {
                     e.printStackTrace();
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							bar.setVisibility(View.INVISIBLE);
+						}
+					});
 					response = "Networking errors; Unable to connect to server";
                 }
             }
         });
-        try {
-            networkThread.start();
-            networkThread.join(5*1000);
-            if(networkThread.isAlive()) response = "Could not connect to the Server.";
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
+		networkThread.start();
         deleteClassText.setText(response);
     }
 }

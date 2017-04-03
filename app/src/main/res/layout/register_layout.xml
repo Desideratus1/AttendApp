@@ -67,4 +67,12 @@
         android:layout_marginBottom="40dp"
         android:id="@+id/registerText" />
 
+    <ProgressBar
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/registerText"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/bar"/>
+
 </RelativeLayout>

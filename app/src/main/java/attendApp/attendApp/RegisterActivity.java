@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.regex.Matcher;
@@ -23,9 +24,8 @@ public class RegisterActivity extends AppCompatActivity {
     EditText fullNameField;
     CheckBox isTeacher;
     TextView registerFailed;
+	ProgressBar bar;
     RaspberryPiCommunication comm;
-    boolean flag = false;
-    String response = "Unknown failure";
 
     /**
      * Called when the activity is first created.
@@ -42,6 +42,7 @@ public class RegisterActivity extends AppCompatActivity {
         isTeacher = (CheckBox) findViewById(R.id.isTeacher);
         fullNameField = (EditText) findViewById(R.id.fullName);
         registerFailed = (TextView) findViewById(R.id.registerText);
+		bar = (ProgressBar) findViewById(R.id.bar);
 
         createButton.setOnClickListener(
                 new View.OnClickListener() {
@@ -76,6 +77,13 @@ public class RegisterActivity extends AppCompatActivity {
         Thread networkThread = new Thread(new Runnable() {
             @Override
             public void run() {
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						bar.setVisibility(View.VISIBLE);
+						registerFailed.setText("");
+					}
+				});
                 try {
                     comm = new RaspberryPiCommunication();
                     String username = usernameField.getText().toString();
@@ -87,11 +95,24 @@ public class RegisterActivity extends AppCompatActivity {
 					Matcher mat = pat.matcher(username);
 					Matcher matPassword = patPassword.matcher(password);
 					if(mat.find()) {
-						response = "Your login contains non-alphanumeric letters.";
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								bar.setVisibility(View.INVISIBLE);
+								registerFailed.setText(new String("Your login contains non-alphanumeric letters"));
+							}
+						});
 						return;
 					}
 					if(matPassword.find()) {
-						response = "Your password contains illegal characters";
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								bar.setVisibility(View.INVISIBLE);
+								registerFailed.setText(new String("Your password contains illegal characters"));
+							}
+						});
+						return;
 					}
 
                     int isT;
@@ -100,32 +121,38 @@ public class RegisterActivity extends AppCompatActivity {
                     Boolean b = comm.sendDataToRaspberryPi(
                             new String[] { "1", username, password, fullName, Integer.toString(isT) });
                     if (!b) {
-                        response = "Data could not be sent";
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								bar.setVisibility(View.INVISIBLE);
+								registerFailed.setText(new String("Data could not be sent"));
+							}
+						});
                         return;
                     }
 
-                    String[] split = comm.getDataFromRaspberryPi();
-                    int code = Integer.parseInt(split[0]);
-                    if (code > 99) { //100+ is an error
-                        response = split[1];
-                        return;
-                    }
-                    flag = true;
+                    final String[] split = comm.getDataFromRaspberryPi();
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							bar.setVisibility(View.INVISIBLE);
+							registerFailed.setText(split[1]);
+						}
+					});
+
+					startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    response = "Networking errors; Unable to connect to server";
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							bar.setVisibility(View.INVISIBLE);
+							registerFailed.setText(new String("Unable to connect to server"));
+						}
+					});
                 }
             }
         });
-        try {
             networkThread.start();
-            networkThread.join(5*1000);
-            if(networkThread.isAlive()) response = "Could not connect to the Server.";
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if (flag) startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-        else registerFailed.setText(response);
     }
 }
 

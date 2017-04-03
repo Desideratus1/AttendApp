@@ -22,4 +22,15 @@
         android:layout_alignStart="@+id/submit_attendance"
         android:layout_marginTop="58dp"/>
 
+    <ProgressBar
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/attendance_success"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="116dp"
+        android:id="@+id/bar"
+        tools:visibility="invisible"
+        android:indeterminate="true"/>
+
 </RelativeLayout>

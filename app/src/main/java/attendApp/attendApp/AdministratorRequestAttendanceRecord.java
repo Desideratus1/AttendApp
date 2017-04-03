@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
     Button requestRecord;
     TextView requestRecordText;
     EditText className;
-    EditText email;
+	ProgressBar bar;
     RaspberryPiCommunication comm;
     String username;
     String response = "Unknown failure";
@@ -36,18 +37,13 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
         requestRecord = (Button) findViewById(R.id.request_record);
         requestRecordText = (TextView) findViewById(R.id.request_record_text);
         className = (EditText) findViewById(R.id.class_name);
+		bar = (ProgressBar) findViewById(R.id.bar);
         username = getIntent().getStringExtra("USERNAME");
 
         requestRecord.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View view) {
                         requestRecord(view);
-						if(!file.equals("")) {
-							Intent n = new Intent(AdministratorRequestAttendanceRecord.this, AdministratorDisplayCSV.class);
-                            n.putExtra("TEXT", file);
-                            file = "";
-                            startActivity(n);
-						}
                     }
                 });
     }
@@ -62,12 +58,25 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
             @Override
             public void run() {
                 try {
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							bar.setVisibility(View.VISIBLE);
+							requestRecordText.setText("");
+						}
+					});
                     comm = new RaspberryPiCommunication();
                     Boolean b = comm.sendDataToRaspberryPi(
                             new String[] {"7", username, className.getText().toString() }
                     );
                     if(!b) {
-                        response = "Data could not be sent";
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								bar.setVisibility(View.INVISIBLE);
+								requestRecordText.setText(new String("Data could not be sent"));
+							}
+						});
                         return;
                     }
 
@@ -75,34 +84,47 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
                     int code = Integer.parseInt(split[0]);
 
                     if(code != 3) {
-						response = "The response we recieved from the server was not bad. Not your fault!";
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								bar.setVisibility(View.INVISIBLE);
+								requestRecordText.setText(new String("The response we recieved from the server was not bad. Not your fault!"));
+							}
+						});
 						return;
 					} else file = split[1];
 
-					//See RaspberryPiCommunication for information regarding how an attendance record is split.
-					/*ArrayList<String[]> disp = new ArrayList<String[]>();
-					String[] d = split[1].split("|");//Split the file by new line representations.
-					for(String str : d) {
-						disp.add(str.split(","));//Split the lines by their commas
-					}*/
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							bar.setVisibility(View.INVISIBLE);
+						}
+					});
 
+					Intent n = new Intent(AdministratorRequestAttendanceRecord.this, AdministratorDisplayCSV.class);
+					n.putExtra("TEXT", file);
+					file = "";
+					startActivity(n);
 
-					response = "Success!";
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							bar.setVisibility(View.INVISIBLE);
+							requestRecordText.setText(new String("Success!"));
+						}
+					});
                 } catch (Exception e) {
-                    e.printStackTrace();
-					response = "Networking errors; Unable to connect to server";
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							bar.setVisibility(View.INVISIBLE);
+							requestRecordText.setText(new String("Networking error; Unable to connect to server"));
+						}
+					});
                 }
             }
         });
-        try {
-            networkThread.start();
-            networkThread.join(5*1000);
-            if(networkThread.isAlive()) response = "Could not connect to the Server.";
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        requestRecordText.setText(response);
+		networkThread.start();
     }
 
 

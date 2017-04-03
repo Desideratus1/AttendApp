@@ -17,6 +17,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.net.MalformedURLException;
@@ -30,7 +31,7 @@ public class StudentDashboard extends AppCompatActivity {
     TextView attendanceResponse;
     String username;
     String response = "Unknown failure";
-    boolean success;
+	ProgressBar bar;
 	RaspberryPiCommunication comm;
 	URL url;
 
@@ -45,11 +46,11 @@ public class StudentDashboard extends AppCompatActivity {
         submitAttendance = (Button) findViewById((R.id.submit_attendance));
         attendanceResponse = (TextView) findViewById(R.id.attendance_success);
         username = getIntent().getStringExtra("USERNAME");
+		bar = (ProgressBar) findViewById(R.id.progBar);
         submitAttendance.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View view) {
                         submitAttendance();
-                        if(success) attendanceResponse.setText("Attendance Recieved");
                     }
                 });
     }
@@ -61,10 +62,16 @@ public class StudentDashboard extends AppCompatActivity {
         Thread networkThread = new Thread(new Runnable() {
             @Override
             public void run() {
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						bar.setVisibility(View.VISIBLE);
+						attendanceResponse.setText("");
+					}
+				});
 				double lat = 0;
 				double lon = 0;
 				try {
-					success = false;
 					comm = new RaspberryPiCommunication();
 					url = new URL("http://freegeoip.net/json");
 					Scanner scanner = new Scanner(url.openStream());
@@ -87,7 +94,13 @@ public class StudentDashboard extends AppCompatActivity {
 					if(lat == 0 || lon == 0) throw new Exception("Failure");
 				} catch (Exception e) {
 					response = "Something has failed with the GPS. There is nothing we can do.";
-					success = false;
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							bar.setVisibility(View.INVISIBLE);
+							attendanceResponse.setText(response);
+						}
+					});
 					return;
 				}
                 try {
@@ -95,30 +108,46 @@ public class StudentDashboard extends AppCompatActivity {
 							new String[] {"2", username, Double.toString(lat), Double.toString(lon) });
                     if(!b) {
                         response = "Data could not be sent";
-						success = false;
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								bar.setVisibility(View.INVISIBLE);
+								attendanceResponse.setText(response);
+							}
+						});
                         return;
                     }
 
                     String[] split = comm.getDataFromRaspberryPi();
-
-                    int code = Integer.parseInt(split[0]);
 					response = split[1];
-                    success = (code < 99);
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							bar.setVisibility(View.INVISIBLE);
+							attendanceResponse.setText(response);
+						}
+					});
                     return;
                 } catch (Exception e) {
 					response = "Networking errors; Unable to connect to server";
-					success = false;
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							bar.setVisibility(View.INVISIBLE);
+							attendanceResponse.setText(response);
+						}
+					});
                 }
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						bar.setVisibility(View.INVISIBLE);
+						attendanceResponse.setText(response);
+					}
+				});
             }
         });
-		try {
-			networkThread.start();
-			networkThread.join(5*1000);
-			if(networkThread.isAlive()) response = "Could not connect to the Server.";
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		attendanceResponse.setText(response);
+		networkThread.start();
     }
 }
 
