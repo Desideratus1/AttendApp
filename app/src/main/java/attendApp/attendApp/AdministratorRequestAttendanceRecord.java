@@ -22,7 +22,6 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
 	ProgressBar bar;
     RaspberryPiCommunication comm;
     String username;
-    String response = "Unknown failure";
 	String file = "";
 
     /**
@@ -38,6 +37,7 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
         requestRecordText = (TextView) findViewById(R.id.request_record_text);
         className = (EditText) findViewById(R.id.class_name);
 		bar = (ProgressBar) findViewById(R.id.bar);
+		bar.setVisibility(View.INVISIBLE);
         username = getIntent().getStringExtra("USERNAME");
 
         requestRecord.setOnClickListener(

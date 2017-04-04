@@ -29,6 +29,7 @@ public class AdministratorDeleteClass extends AppCompatActivity {
         deleteClassText = (TextView) findViewById(R.id.delete_class_text);
         className = (EditText) findViewById(R.id.class_name);
 		bar = (ProgressBar) findViewById(R.id.bar);
+		bar.setVisibility(View.INVISIBLE);
         username = getIntent().getStringExtra("USERNAME");
 
         deleteClassText.setVisibility(View.INVISIBLE);

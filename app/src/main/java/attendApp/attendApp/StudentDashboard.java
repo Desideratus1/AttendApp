@@ -47,6 +47,7 @@ public class StudentDashboard extends AppCompatActivity {
         attendanceResponse = (TextView) findViewById(R.id.attendance_success);
         username = getIntent().getStringExtra("USERNAME");
 		bar = (ProgressBar) findViewById(R.id.progBar);
+		bar.setVisibility(View.INVISIBLE);
         submitAttendance.setOnClickListener(
                 new View.OnClickListener() {
                     public void onClick(View view) {

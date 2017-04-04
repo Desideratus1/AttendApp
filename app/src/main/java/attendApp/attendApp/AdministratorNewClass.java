@@ -32,6 +32,7 @@ public class AdministratorNewClass extends AppCompatActivity {
 		createClassText = (TextView) findViewById(R.id.new_class_text);
 		className = (EditText) findViewById(R.id.new_class);
 		bar = (ProgressBar) findViewById(R.id.bar);
+		bar.setVisibility(View.INVISIBLE);
 		username = getIntent().getStringExtra("USERNAME");
 
 		createClass.setOnClickListener(

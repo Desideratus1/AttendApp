@@ -43,6 +43,7 @@ public class RegisterActivity extends AppCompatActivity {
         fullNameField = (EditText) findViewById(R.id.fullName);
         registerFailed = (TextView) findViewById(R.id.registerText);
 		bar = (ProgressBar) findViewById(R.id.bar);
+		bar.setVisibility(View.INVISIBLE);
 
         createButton.setOnClickListener(
                 new View.OnClickListener() {
@@ -89,6 +90,17 @@ public class RegisterActivity extends AppCompatActivity {
                     String username = usernameField.getText().toString();
                     String password = passwordField.getText().toString();
                     String fullName = fullNameField.getText().toString();
+
+					if(username.equals("") || password.equals("") || fullName.equals("")) {
+						runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								bar.setVisibility(View.INVISIBLE);
+								registerFailed.setText("All fields are required");
+							}
+						});
+						return;
+					}
 
 					Pattern pat = Pattern.compile("^a-zA-Z0-9");
 					Pattern patPassword = Pattern.compile("^a-zA-Z0-9!@#$%^&*()_+");

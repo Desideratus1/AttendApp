@@ -84,7 +84,6 @@ public class RaspberryPiCommunication {
             DOS = new DataOutputStream(socket.getOutputStream());
             DIS = new DataInputStream(socket.getInputStream());
         } catch(Exception e) {
-            e.printStackTrace();
         }
     }
 

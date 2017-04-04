@@ -33,6 +33,8 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
         beginAttendancePeriod = (Button) findViewById(R.id.beginAttendancePeriod);
         cancelAttendancePeriod = (Button) findViewById(R.id.cancelAttendancePeriod);
         attendanceText = (TextView) findViewById(R.id.attendancePeriodTexts);
+		bar = (ProgressBar) findViewById(R.id.bar);
+		bar.setVisibility(View.INVISIBLE);
         username = getIntent().getStringExtra("USERNAME");
 
         beginAttendancePeriod.setOnClickListener( //Whenever the login button is pressed
