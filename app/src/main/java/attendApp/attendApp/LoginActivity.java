@@ -71,22 +71,16 @@ public class LoginActivity extends AppCompatActivity {
 			String username = usernameField.getText().toString();
 			String password = passwordField.getText().toString();
 
-			Pattern pat = Pattern.compile("^a-zA-Z0-9");
-			Pattern patPassword = Pattern.compile("^a-zA-Z0-9!@#$%^&*()_+");
-			Matcher mat = pat.matcher(username);
-			Matcher matPassword = patPassword.matcher(password);
-			if(mat.find()) {
-				response = "Your login contains non-alphanumeric letters.";
+			if(username.trim().length() == 0 || password.trim().length() == 0) {
+				response = "Only whitespace detected.";
 				return;
-			}
-			if(matPassword.find()) {
-				response = "Your password contains illegal characters";
 			}
 
 			Boolean b = comm.sendDataToRaspberryPi(
 					new String[] {"0", username, password });
 			if(!b) {
 				response = "Data could not be sent";
+				c = 50;
 				return;
 			}
 			split = comm.getDataFromRaspberryPi();

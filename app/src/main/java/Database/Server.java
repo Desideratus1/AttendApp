@@ -27,9 +27,9 @@ public class Server {
 
     public Server() throws IOException, InterruptedException {
         socketServer = new ServerSocket(1420);
-	File file = new File("un");
-	if(!file.exists()) file.createNewFile();
-        logins = new LoginsCSV("un");
+		File file = new File("un");
+		if(!file.exists()) file.createNewFile();
+        logins = new LoginsCSV(file.getName());
 		getGPS();
     }
 
@@ -221,6 +221,8 @@ public class Server {
 				if (user.hasAccessToClass(currentActiveAttendancePeriodClassName)) {
 					activePeriod.cancelAttendancePeriod();
 					sendData(DOS, 0, "Success!");
+					currentActiveAttendancePeriodClassName = null;
+					activePeriod = null;
 					return;
 				}
 

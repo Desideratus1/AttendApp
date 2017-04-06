@@ -15,7 +15,6 @@ public class AdministratorDeleteClass extends AppCompatActivity {
     RaspberryPiCommunication comm;
 	ProgressBar bar;
     String username;
-    String response = "Unknown failure";
 
     /**
      * Called when the activity is first created.
@@ -31,8 +30,6 @@ public class AdministratorDeleteClass extends AppCompatActivity {
 		bar = (ProgressBar) findViewById(R.id.bar);
 		bar.setVisibility(View.INVISIBLE);
         username = getIntent().getStringExtra("USERNAME");
-
-        deleteClassText.setVisibility(View.INVISIBLE);
 
         deleteClass.setOnClickListener(
                 new View.OnClickListener() {
@@ -82,18 +79,16 @@ public class AdministratorDeleteClass extends AppCompatActivity {
 						}
 					});
                 } catch (Exception e) {
-                    e.printStackTrace();
 					runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
 							bar.setVisibility(View.INVISIBLE);
 						}
 					});
-					response = "Networking errors; Unable to connect to server";
+					deleteClassText.setText("Networking errors; Unable to connect to server");
                 }
             }
         });
 		networkThread.start();
-        deleteClassText.setText(response);
     }
 }

@@ -4,7 +4,7 @@
                 android:layout_width="match_parent" android:layout_height="match_parent">
 
     <TextView
-        android:text="TextView"
+        android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/delete_class_text"
@@ -24,12 +24,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
-        android:text="Class name"
         android:ems="10"
         android:layout_above="@+id/delete_class"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="19dp"
-        android:id="@+id/class_name" />
+        android:id="@+id/class_name"
+        android:hint="Class name"/>
 
     <ProgressBar
         style="?android:attr/progressBarStyle"

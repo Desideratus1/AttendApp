@@ -102,26 +102,12 @@ public class RegisterActivity extends AppCompatActivity {
 						return;
 					}
 
-					Pattern pat = Pattern.compile("^a-zA-Z0-9");
-					Pattern patPassword = Pattern.compile("^a-zA-Z0-9!@#$%^&*()_+");
-					Matcher mat = pat.matcher(username);
-					Matcher matPassword = patPassword.matcher(password);
-					if(mat.find()) {
+					if(username.trim().length() == 0 || password.trim().length() == 0 || fullName.trim().length() == 0) {
 						runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
 								bar.setVisibility(View.INVISIBLE);
-								registerFailed.setText(new String("Your login contains non-alphanumeric letters"));
-							}
-						});
-						return;
-					}
-					if(matPassword.find()) {
-						runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								bar.setVisibility(View.INVISIBLE);
-								registerFailed.setText(new String("Your password contains illegal characters"));
+								registerFailed.setText(new String("Your username/password/name are illegal"));
 							}
 						});
 						return;

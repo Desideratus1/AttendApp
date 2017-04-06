@@ -4,17 +4,6 @@
                 android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:text="@string/place_your_file_into_the_folder_that_the_university_has_labeled_specify_the_class_name_exactly_minus_the_extention_and_press_the_button_to_create_the_class"
-        android:textSize="16sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="79dp"
-        android:id="@+id/textView"
-        android:layout_below="@+id/create_class"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
-
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -54,5 +43,13 @@
         android:id="@+id/bar"
         tools:visibility="invisible"
         android:indeterminate="true"/>
+
+    <TextView
+        android:text="@string/new_class_instructions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView"
+        android:layout_below="@+id/new_class_text"
+        />
 
 </RelativeLayout>

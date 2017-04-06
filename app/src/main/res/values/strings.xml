@@ -26,7 +26,7 @@
     <string name="create_class">Create Class</string>
     <string name="class_name">Class name</string>
     <string name="request_record">Request Record</string>
-    <string name="place_your_file_into_the_folder_that_the_university_has_labeled_specify_the_class_name_exactly_minus_the_extention_and_press_the_button_to_create_the_class">Place your file into the folder that the University has labeled, specify the class name EXACTLY (Minus the extention), and press the button to create the class.</string>
+    <string name="new_class_instructions">Place your file in the place designated by your university.\n The format should be: "Name1,Name2,Name3..." at a .txt file.\nPlace the name of the file in the field above.</string>
     <string name="success">Success!</string>
 
 </resources>

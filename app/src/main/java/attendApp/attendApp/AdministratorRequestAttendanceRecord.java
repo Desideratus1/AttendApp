@@ -29,7 +29,6 @@ public class AdministratorRequestAttendanceRecord extends AppCompatActivity {
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        //TODO: GET USERNAME/PASSWORD
         super.onCreate(savedInstanceState);
         setContentView(R.layout.admin_request_record_layout);
 

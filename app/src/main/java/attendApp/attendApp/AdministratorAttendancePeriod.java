@@ -132,7 +132,7 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
      * @param view
      */
     private void cancelPeriod(View view) {
-        Thread networkThread = new Thread(new Runnable() {
+        Thread networkThread2 = new Thread(new Runnable() {
             @Override
             public void run() {
 				runOnUiThread(new Runnable() {
@@ -142,6 +142,7 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
 					}
 				});
                 try {
+					comm = new RaspberryPiCommunication();
                     Boolean b = comm.sendDataToRaspberryPi(
 							new String[] {"4", username }
                     );
@@ -169,7 +170,7 @@ public class AdministratorAttendancePeriod extends AppCompatActivity {
                 }
             }
         });
-		networkThread.start();
+		networkThread2.start();
     }
 
 
