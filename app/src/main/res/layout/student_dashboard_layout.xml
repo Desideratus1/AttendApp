@@ -16,6 +16,7 @@
     <TextView
         android:layout_width="200dp"
         android:layout_height="50dp"
+        android:textSize="24dp"
         android:id="@+id/attendance_success"
         android:layout_below="@+id/submit_attendance"
         android:layout_alignLeft="@+id/submit_attendance"
@@ -23,7 +24,7 @@
         android:layout_marginTop="58dp"/>
 
     <ProgressBar
-        style="?android:attr/progressBarStyle"
+        style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/attendance_success"

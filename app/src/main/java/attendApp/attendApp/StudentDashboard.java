@@ -20,8 +20,10 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 import java.util.Scanner;
 
@@ -75,7 +77,10 @@ public class StudentDashboard extends AppCompatActivity {
 				try {
 					comm = new RaspberryPiCommunication();
 					url = new URL("http://freegeoip.net/json");
-					Scanner scanner = new Scanner(url.openStream());
+					URLConnection urlconn = url.openConnection();
+					urlconn.setConnectTimeout(3000);
+					urlconn.connect();
+					Scanner scanner = new Scanner(urlconn.getInputStream());
 					String str = "";
 					while(scanner.hasNextLine()) {
 						str = str + scanner.nextLine();
@@ -94,7 +99,8 @@ public class StudentDashboard extends AppCompatActivity {
 					}
 					if(lat == 0 || lon == 0) throw new Exception("Failure");
 				} catch (Exception e) {
-					response = "Something has failed with the GPS. There is nothing we can do.";
+					e.printStackTrace();
+					response = "Something has failed with the GPS. Restart your wifi";
 					runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
