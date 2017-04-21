@@ -17,8 +17,3 @@ These contain the buttons, text fields etc. that dictate where each the various 
   
 Reference for the Java files
   LoginActivity.java is the first java file loaded into the program and its corresponding layout (login_layout) will be the first screen the user sees.
-  
-  General TODO.
-  
- * GENERAL - Encryption. BACK BUTTONS must be placed everywhere.
- * DOCUMENTATION MUST OCCUR BEFORE TOO MUCH PROGRESS IS MADE.
